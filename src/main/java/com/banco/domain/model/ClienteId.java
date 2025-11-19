@@ -22,7 +22,7 @@ public final class ClienteId {
         if(valor == null){
            throw new IllegalArgumentException("El Id del cliente no puede ser nulo");
         }
-         // 🛡️ SEGUNDO: Validar formato con expresión regular
+         // 🛡️ SEGUNDO: Validar formato con Pattern
          if(!VALIDAR_PATRON.matcher(valor).matches()){
               throw new IllegalArgumentException(String.format(
                 "Formato de id de cliente invalido. Debe ser: %s", valor, FORMATO));
@@ -32,7 +32,11 @@ public final class ClienteId {
          this.valor = valor;
     }
 
-             //Crear nuevo ClienteId
+
+       // METODOS DE LA CLASE
+
+            
+          //Crear nuevo ClienteId
          public static ClienteId newCliente(String valor){
             return new ClienteId(valor);
          }
