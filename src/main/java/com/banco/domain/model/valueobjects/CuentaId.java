@@ -1,4 +1,4 @@
-package com.banco.domain.model;
+package com.banco.domain.model.valueobjects;
 
 
 import java.util.Objects;
