@@ -42,6 +42,11 @@ public enum Moneda {
         return redondeoEfectivo;
     }
 
+
+
+
+
+
     // 💡 MÉTODOS DE NEGOCIO (comportamiento rico)
 
     //     * Verifica si la moneda permite operaciones con decimales
@@ -104,7 +109,8 @@ public enum Moneda {
                 return true; // Para otras monedas, cualquier monto positivo es válido
 
             }
-     }
+
+    }
     
 
     

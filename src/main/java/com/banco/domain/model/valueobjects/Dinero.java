@@ -17,7 +17,7 @@ public class Dinero {
 
     // CONSTRUCTOR
 
-    private Dinero(BigDecimal monto, Moneda moneda) {
+    public Dinero(BigDecimal monto, Moneda moneda) {
 
         // 1- no nulo
         if (monto == null)
