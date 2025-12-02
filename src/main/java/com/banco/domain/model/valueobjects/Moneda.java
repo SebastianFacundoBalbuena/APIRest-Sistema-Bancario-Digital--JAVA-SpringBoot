@@ -95,6 +95,30 @@ public enum Moneda {
                 }
             }
 
+
+            public static Moneda fromCodigo(String codigo) {
+        if (codigo == null || codigo.isBlank()) {
+            throw new IllegalArgumentException("El código de moneda no puede estar vacío");
+        }
+        
+        String codigoUpper = codigo.trim().toUpperCase();
+        
+        return switch (codigoUpper) {
+            case "EUR" -> EUR;
+            case "USD" -> USD;
+            case "ARG", "ARS" -> ARG; // Permite ambos códigos
+            default -> throw new IllegalArgumentException(
+                "Código de moneda no válido: '" + codigo + 
+                "'. Valores permitidos: EUR, USD, ARG"
+            );
+        };
+    }
+
+
+
+
+
+
             //✅ VALIDACIÓN DE MONTO VÁLIDO
             public boolean esValido(double monto){
 
