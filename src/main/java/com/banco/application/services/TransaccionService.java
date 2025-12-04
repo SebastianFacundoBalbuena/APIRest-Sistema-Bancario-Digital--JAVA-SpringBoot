@@ -15,7 +15,7 @@ import com.banco.domain.model.valueobjects.Moneda;
 import com.banco.domain.model.valueobjects.TransaccionId;
 import com.banco.domain.model.valueobjects.TransaccionId.TipoTransaccion;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 //  Orquesta toda la operación de transferir dinero entre cuentas.
 // EJECUTAMOS LA LOGICA DEL DOMINIO

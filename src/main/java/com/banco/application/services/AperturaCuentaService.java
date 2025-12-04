@@ -21,7 +21,7 @@ import com.banco.domain.model.valueobjects.TipoCuenta;
 import com.banco.domain.model.valueobjects.TransaccionId;
 import com.banco.domain.model.valueobjects.TransaccionId.TipoTransaccion;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 
 
