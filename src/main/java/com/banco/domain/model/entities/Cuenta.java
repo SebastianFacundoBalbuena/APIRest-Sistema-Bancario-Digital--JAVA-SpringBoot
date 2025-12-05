@@ -31,6 +31,18 @@ public class Cuenta {
         System.out.println("Cuenta creada: " + cuentaId + "para cliente: " + clienteId);
     }
 
+    public Cuenta(CuentaId cuentaId, ClienteId clienteId, Moneda moneda, Dinero saldo, boolean activa){
+
+        // VALIDACIONES DE SEGURIDAD - Nunca aceptamos valores nulos
+        this.cuentaId = Objects.requireNonNull(cuentaId, "El id de cuenta no puede ser nulo");
+        this.clienteId = Objects.requireNonNull(clienteId,"El id de cliente no puede ser nulo");
+        this.moneda = Objects.requireNonNull(moneda,"la moneda no puede ser nula");
+        this.saldo = Objects.requireNonNull(saldo,"el saldo no puede ser nulo");
+        this.activa = Objects.requireNonNull(activa,"se requiere un valor para -activa-");
+
+
+    }
+
 
 
     // MÉTODOS DE OPERACIÓNES BÁSICAS
