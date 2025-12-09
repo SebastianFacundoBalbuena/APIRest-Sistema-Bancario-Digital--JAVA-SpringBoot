@@ -13,7 +13,7 @@ import com.banco.domain.model.valueobjects.ClienteId;
 public interface CuentaRepository {
 
     //GUARDAR UNA CUENTA
-    Cuenta guardar(Cuenta cuenta);
+    void guardar(Cuenta cuenta);
 
     // BUSCAR CUENTA
     Optional<Cuenta> buscarPorId(CuentaId cuentaId);
@@ -23,5 +23,8 @@ public interface CuentaRepository {
 
     //ACTUALIZAR CUENTA
     void actualizar(Cuenta cuenta);
+
+    // BUSCAR CUENTA CON NUMERO
+    boolean existeCuentaConNumero(String numeroCuenta);
 
 }
