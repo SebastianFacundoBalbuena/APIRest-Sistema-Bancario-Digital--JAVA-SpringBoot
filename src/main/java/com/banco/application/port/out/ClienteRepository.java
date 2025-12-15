@@ -8,7 +8,7 @@ import com.banco.domain.model.valueobjects.ClienteId;
 public interface ClienteRepository {
 
     // GUARDAR
-    Cliente guardar(Cliente cliente);
+     void guardar(Cliente cliente);
 
     // BUSCAR POR ID
     Optional<Cliente> buscarPorId(ClienteId clienteId);
