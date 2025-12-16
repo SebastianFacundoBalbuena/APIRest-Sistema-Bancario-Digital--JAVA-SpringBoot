@@ -65,6 +65,10 @@ public class Transaccion {
             tipoTransaccion, monto, estado, fechaDeCreacion.toLocalDate());
     }
 
+
+    
+    // METODOS
+
     //ES TRANSACCIÓN DE ENTRADA?
     public boolean esEntradaPara(CuentaId cuentaId) {
         return cuentaId.equals(cuentaDestino) && 

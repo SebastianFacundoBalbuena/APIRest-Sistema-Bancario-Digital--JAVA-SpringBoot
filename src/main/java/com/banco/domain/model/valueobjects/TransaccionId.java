@@ -21,6 +21,9 @@ public class TransaccionId {
     }
 
 
+    public String getValor() {
+        return valor;
+    }
 
     //  TOSTRING 
     @Override
@@ -49,6 +52,8 @@ public class TransaccionId {
         RECHAZADA,
         REVERTIDA
     }
+
+
 
 
 }

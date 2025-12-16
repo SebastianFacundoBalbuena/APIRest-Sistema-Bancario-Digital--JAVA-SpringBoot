@@ -11,7 +11,7 @@ import com.banco.domain.model.valueobjects.TransaccionId;
 public interface TransaccionRepository {
 
     // GUARDAR
-    Transaccion guardar(Transaccion transaccion);
+    void guardar(Transaccion transaccion);
 
     // BUSCAR POR ID
     Optional<Transaccion> buscarPorId(TransaccionId transaccionId);
@@ -21,4 +21,6 @@ public interface TransaccionRepository {
 
     //BUSCAR POR REFERENCIA
     List<Transaccion> buscarPorReferencia(String referencia);
+
+    
 }

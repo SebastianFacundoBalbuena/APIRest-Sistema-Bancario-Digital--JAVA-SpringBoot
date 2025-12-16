@@ -29,8 +29,8 @@ public class BancoApplication {
             System.out.println("🚀 Probando conexión con base de datos...");
             
             // 1. Crear una cuenta de dominio
-            CuentaId cuentaId = CuentaId.newCuentaId("TEST-001");
-            ClienteId clienteId = ClienteId.newCliente("CLI-001");
+            CuentaId cuentaId = CuentaId.generarNueva(290, 1234, Moneda.USD);
+            ClienteId clienteId = ClienteId.newCliente("CLI-00000001");
             Moneda moneda = Moneda.USD;
             Dinero saldoInicial = Dinero.nuevoCero(moneda);
             
@@ -50,8 +50,10 @@ public class BancoApplication {
             }
             
             // 4. Verificar existencia
-            boolean existe = repository.existeCuentaConNumero("TEST-001");
+            boolean existe = repository.existeCuentaConNumero(cuentaId.getValor());
             System.out.println("✅ Verificación existencia: " + existe);
+
+            System.out.println("✅ Aplicación bancaria iniciada correctamente");
         };
     }
 

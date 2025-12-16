@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 public final class ClienteId {
 
     // Todos los IDs deben ser CLI- seguido de 8 números.
-    private static final String FORMATO = "CLI-\\\\d{8}";
+    private static final String FORMATO = "CLI-\\d{8}";
     //FILTRO pattern que analisa si el formato es el correcto
     private static final Pattern VALIDAR_PATRON = Pattern.compile(FORMATO);
 
