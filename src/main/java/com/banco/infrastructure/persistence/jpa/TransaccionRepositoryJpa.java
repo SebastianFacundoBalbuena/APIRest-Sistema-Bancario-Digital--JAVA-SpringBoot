@@ -69,8 +69,10 @@ public class TransaccionRepositoryJpa implements TransaccionRepository {
 
         TransaccionEntity entity = transaccionMapper.aEntity(transaccion);
 
+        if(entity != null){
         transaccionJpaRepository.save(entity);
         System.out.println(" Transacción guardada exitosamente");
+        }
     }
 
     @Override

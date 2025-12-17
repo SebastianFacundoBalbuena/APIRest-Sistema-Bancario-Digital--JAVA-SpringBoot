@@ -70,9 +70,12 @@ public class CuentaRepositoryJpa implements CuentaRepository {
         // Convertimos a Entity
         CuentaEntity entity = cuentaMapper.aEntity(cuenta);
 
-        cuentaJpaRepository.save(entity);
+        if(entity != null){ 
+            cuentaJpaRepository.save(entity);
+            System.out.println(" Cuenta guardada en BD: " + cuenta.getCuentaId());
+        }
 
-        System.out.println(" Cuenta guardada en BD: " + cuenta.getCuentaId());
+        
     }
 
     @Override

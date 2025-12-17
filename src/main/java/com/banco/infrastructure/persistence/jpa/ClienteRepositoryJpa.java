@@ -68,9 +68,14 @@ public class ClienteRepositoryJpa implements ClienteRepository {
     public void guardar(Cliente cliente){
 
         ClienteEntity clienteEntity = clienteMapper.aEntity(cliente);
-        clienteJpaRepository.save(clienteEntity);
+        
+        if(clienteEntity != null){
 
-        System.out.println(" Cliente guardado exitosamente");
+         clienteJpaRepository.save(clienteEntity);
+         System.out.println(" Cliente guardado exitosamente");
+        }
+
+        
     }
 
     @Override
