@@ -179,8 +179,7 @@ public class AperturaCuentaService {
 
         ClienteId clienteId = ClienteId.newCliente(request.getClienteId());
 
-        Cliente cliente = clienteRepository.buscarPorId(clienteId).orElseThrow(()-> new IllegalStateException(
-            "Cliente no encontrado: " + clienteId));
+        Cliente cliente = clienteRepository.buscarPorId(clienteId);
 
             //VALIDAR QUE ESTA ACTIVO
             if(!cliente.getActiva()) throw new IllegalStateException("El cliente esta inactivo y no puede abrir cuentas");

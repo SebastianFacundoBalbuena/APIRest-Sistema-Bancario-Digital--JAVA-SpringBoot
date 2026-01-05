@@ -46,7 +46,7 @@ public class ClienteRepositoryJpa implements ClienteRepository {
     // METODOS 
 
     @Override
-    public Optional<Cliente> buscarPorId(ClienteId clienteId){
+    public Cliente buscarPorId(ClienteId clienteId){
         
         String IdString = clienteId.getValor();
         
@@ -55,11 +55,11 @@ public class ClienteRepositoryJpa implements ClienteRepository {
         if(entityOpt.isPresent()){
             Cliente cliente = clienteMapper.aDominio(entityOpt.get());
 
-            return Optional.of(cliente);
+            return cliente;
         }
         else{
             System.out.println(" Cliente NO encontrado: " + clienteId);
-            return Optional.empty();
+            return null;
         }
 
     }

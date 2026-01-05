@@ -34,6 +34,18 @@ public class Cliente {
 
     }
 
+        public Cliente(ClienteId clienteId, String nombre, String email, boolean activa, List<CuentaId> cuentas){
+        
+        // NO NULOS
+        this.clienteId = Objects.requireNonNull(clienteId,"El id no puede ser nulo");
+        this.nombre = Objects.requireNonNull(nombre,"El nombre no puede ser nulo");
+        this.email = validarEmail(email);
+        this.activa = Objects.requireNonNull(activa, "Se requiere un valor");
+        this.cuentas = cuentas;
+        this.maxCuentasPermitidas = 5;
+
+    }
+
 
     // GETTERS
     
