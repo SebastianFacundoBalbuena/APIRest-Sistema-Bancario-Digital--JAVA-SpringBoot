@@ -46,9 +46,9 @@ public class ClienteRepositoryJpa implements ClienteRepository {
     // METODOS 
 
     @Override
-    public Cliente buscarPorId(ClienteId clienteId){
+    public Cliente buscarPorId(String clienteId){
         
-        String IdString = clienteId.getValor();
+        String IdString = clienteId;
         
         Optional<ClienteEntity> entityOpt = clienteJpaRepository.findByClienteId(IdString);
 
@@ -67,7 +67,8 @@ public class ClienteRepositoryJpa implements ClienteRepository {
     @Override
     public void guardar(Cliente cliente){
 
-        ClienteEntity clienteEntity = clienteMapper.aEntity(cliente);
+        ClienteEntity entityExistente = clienteJpaRepository.findByClienteId(cliente.getClienteId().getValor()).orElse(null);
+        ClienteEntity clienteEntity = clienteMapper.aEntity(cliente, entityExistente);
         
         if(clienteEntity != null){
 

@@ -52,22 +52,25 @@ public class ClienteMapper {
 
 
     // DE DOMINIO A ENTITY
-    public ClienteEntity aEntity(Cliente dominio){
+    public ClienteEntity aEntity(Cliente dominio,ClienteEntity entityExistente){
 
-        ClienteEntity clienteEntity = new ClienteEntity();
+        if(entityExistente == null){
+            entityExistente = new ClienteEntity();
+        }
+        
 
-        clienteEntity.setClienteId(dominio.getClienteId().getValor());
+        entityExistente.setClienteId(dominio.getClienteId().getValor());
 
         // Cada iteracion retorna su valor a string y luego lo almacenamos
         List<String> cuentasIdsString = dominio.getCuentas()
         .stream().map(dom -> dom.getValor()).collect(Collectors.toList());
 
-        clienteEntity.setCuentasIds(cuentasIdsString);
-        clienteEntity.setActiva(dominio.getActiva());
-        clienteEntity.setEmail(dominio.getEmail());
-        clienteEntity.setNombre(dominio.getNombre());
-        clienteEntity.setMaxCuentasPermitidas(dominio.getMaxCuentas());
+        entityExistente.setCuentasIds(cuentasIdsString);
+        entityExistente.setActiva(dominio.getActiva());
+        entityExistente.setEmail(dominio.getEmail());
+        entityExistente.setNombre(dominio.getNombre());
+        entityExistente.setMaxCuentasPermitidas(dominio.getMaxCuentas());
 
-        return clienteEntity;
+        return entityExistente;
     }
 }

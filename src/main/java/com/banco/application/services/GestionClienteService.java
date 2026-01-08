@@ -41,6 +41,7 @@ public class GestionClienteService {
 
         Cliente cliente = new Cliente(clienteId, request.getNombre(), request.getEmail());
 
+        
         clienteRepository.guardar(cliente);
 
         return convertirResponse(cliente);
@@ -58,21 +59,17 @@ public class GestionClienteService {
 
     public ClienteResponse actualizarCliente(String clienteId, ActualizarClienteRequest request){
 
-        ClienteId clienteId2 = ClienteId.newCliente(clienteId);
 
-        validarClienteId(clienteId);
+        Cliente clienteDB = validarClienteId(clienteId);
 
         validarEmail(request.getEmail().get());
 
-        Cliente clienteActualizado = new Cliente(
-            clienteId2,
-             request.getNombre().get(), 
-             request.getEmail().get());
-        
+        clienteDB.setNombre(request.getNombre().get());
+        clienteDB.setEmail(request.getEmail().get());
 
-             clienteRepository.guardar(clienteActualizado);
+             clienteRepository.guardar(clienteDB);
 
-             return convertirResponse(clienteActualizado);
+             return convertirResponse(clienteDB);
     }
 
     public void descativarCliente(String clienteStr){
@@ -180,9 +177,9 @@ public class GestionClienteService {
 
         ClienteId clienteId = ClienteId.newCliente(cliente);
 
-        if(clienteRepository.buscarPorId(clienteId) != null) {
+        if(clienteRepository.buscarPorId(cliente) != null) {
 
-          Cliente returnCliente = clienteRepository.buscarPorId(clienteId);
+          Cliente returnCliente = clienteRepository.buscarPorId(cliente);
 
           return returnCliente;
 

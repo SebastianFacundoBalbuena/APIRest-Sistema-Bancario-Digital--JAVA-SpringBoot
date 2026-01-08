@@ -11,8 +11,8 @@ public class Cliente {
 
     // ATRIBUTOS
     private final ClienteId clienteId;
-    private final String nombre;
-    private final String email;
+    private String nombre;
+    private String email;
     private final List<CuentaId> cuentas;
     private boolean activa;
     private final int maxCuentasPermitidas;
@@ -61,6 +61,8 @@ public class Cliente {
     public void activar(){this.activa = true;}
 
 
+    public void setNombre(String nombre){this.nombre = nombre;}
+    public void setEmail(String email){this.email = email;}
 
 
 
@@ -137,5 +139,9 @@ public class Cliente {
     private void validarCuentaExistente(CuentaId cuentaId){
         if(cuentas.contains(cuentaId)) throw new IllegalArgumentException(
             "La cuenta " + cuentaId + " ya se encuentra asociada a este cliente " );
+    }
+
+    public void setActiva(boolean activa) {
+        this.activa = activa;
     }
 }

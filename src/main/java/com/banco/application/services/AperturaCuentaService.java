@@ -177,7 +177,7 @@ public class AperturaCuentaService {
 
     private Cliente cargarYValidarCliente(AperturaCuentaRequest request){
 
-        ClienteId clienteId = ClienteId.newCliente(request.getClienteId());
+        String clienteId = request.getClienteId();
 
         Cliente cliente = clienteRepository.buscarPorId(clienteId);
 
