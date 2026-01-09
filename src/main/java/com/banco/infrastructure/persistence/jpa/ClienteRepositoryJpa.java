@@ -7,7 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import com.banco.application.port.out.ClienteRepository;
 import com.banco.domain.model.entities.Cliente;
-import com.banco.domain.model.valueobjects.ClienteId;
+
+
 import com.banco.infrastructure.persistence.entities.ClienteEntity;
 import com.banco.infrastructure.persistence.mappers.ClienteMapper;
 import jakarta.transaction.Transactional;
