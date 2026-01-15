@@ -194,7 +194,7 @@ public class TransaccionService {
     // CARGAR CUENTA ORIGEN
         public Cuenta cargarCuentaOrigen(TransferenciaRequest request){
 
-        CuentaId cuentaOrigen = CuentaId.newCuentaId(request.getCuentaDestino());
+        CuentaId cuentaOrigen = CuentaId.newCuentaId(request.getCuentaOrigen());
         
         return cuentaRepository.buscarPorId(cuentaOrigen).orElseThrow(()-> new IllegalArgumentException(
             "Cuenta de destino no encontrada: " + cuentaOrigen));

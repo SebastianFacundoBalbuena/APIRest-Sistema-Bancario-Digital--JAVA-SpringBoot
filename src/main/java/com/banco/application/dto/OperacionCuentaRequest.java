@@ -19,6 +19,9 @@ public class OperacionCuentaRequest {
     @DecimalMin(value = "0.01", message = "El monto debe ser mayor a 0")
     private BigDecimal monto;
 
+    @NotBlank(message = "La moneda es obligatoria")
+    private String moneda;
+
     private String descripcion;
 
     private String referencia;

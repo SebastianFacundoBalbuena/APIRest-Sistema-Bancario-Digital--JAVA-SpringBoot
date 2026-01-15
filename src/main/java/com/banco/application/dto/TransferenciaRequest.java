@@ -2,14 +2,27 @@ package com.banco.application.dto;
 
 import java.math.BigDecimal;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 // DTO: SOLICITUD DE TRANSFERENCIA
 public class TransferenciaRequest {
 
     //ATRIBUTOS
+    @NotBlank(message = "Cuenta origen es obligatoria")
     private String cuentaOrigen;
+
+    @NotBlank(message = "Cuenta destino es obligatoria")
     private String cuentaDestino;
+
+    @NotNull(message = "El monto es obligatorio")
+    @DecimalMin(value = "0.01", message = "El monto debe ser mayor a 0")
     private BigDecimal monto;
+
+    @NotBlank(message = "La moneda es obligatoria")
     private String moneda;
+    
     private String descripcion;
 
     // Contructor
