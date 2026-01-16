@@ -63,8 +63,149 @@ public class TransaccionService {
     }
 
 
+    public Transaccion depositar(String cuentaId, BigDecimal monto, String moneda, String descripcion){
 
-    // METODOS DE ORQUESTACION
+        try {
+            // convertir a objetos del dominio
+            CuentaId id = CuentaId.newCuentaId(cuentaId);
+            Dinero dinero = Dinero.nuevo(monto, Moneda.valueOf(moneda.toUpperCase()));
+
+            // buscar cuenta x id
+            Cuenta cuenta = cuentaRepository.buscarPorId(id).orElseThrow(()-> new IllegalArgumentException(
+                "Cuenta no encontrada"));
+
+            // crear transaccion
+
+            Transaccion transaccion = new Transaccion(
+                generarTransaccionId(),
+                 TipoTransaccion.DEPOSITO, 
+                 null,
+                 id,
+                 dinero, 
+                 descripcion != null ? descripcion : "Deposito");
+
+            cuenta.depositar(dinero);
+            transaccion.completar();
+
+            cuentaRepository.actualizar(cuenta);
+            transaccionRepository.guardar(transaccion);
+
+            System.out.println("✅ Depósito completado: " + transaccion.getId());
+            return transaccion;
+
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error de deposito: " + e.getMessage());
+        }
+    }
+
+
+        public Transaccion retirar(String cuentaId, BigDecimal monto, String moneda, String descripcion){
+
+        try {
+            // convertir a objetos del dominio
+            CuentaId id = CuentaId.newCuentaId(cuentaId);
+            Dinero dinero = Dinero.nuevo(monto, Moneda.valueOf(moneda.toUpperCase()));
+
+            // buscar cuenta x id
+            Cuenta cuenta = cuentaRepository.buscarPorId(id).orElseThrow(()-> new IllegalArgumentException(
+                "Cuenta no encontrada"));
+
+            // crear transaccion
+
+            Transaccion transaccion = new Transaccion(
+                generarTransaccionId(),
+                 TipoTransaccion.RETIRO, 
+                 id,
+                 null,
+                 dinero, 
+                 descripcion != null ? descripcion : "Retiro");
+
+            cuenta.retirar(dinero);
+            transaccion.completar();
+
+            cuentaRepository.actualizar(cuenta);
+            transaccionRepository.guardar(transaccion);
+
+            System.out.println("✅ Retiro completado: " + transaccion.getId());
+            return transaccion;
+
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error en retiro: " + e.getMessage());
+        }
+    }
+
+
+    public Transaccion revertir(String transaccionId){
+
+        try {
+            
+                    // buscar transaccion original
+        TransaccionId id = new TransaccionId(transaccionId);
+        Transaccion original = transaccionRepository.buscarPorId(id).orElseThrow(()-> new IllegalArgumentException(
+            "Transaccion no encontrada"));
+
+        // validar que sea reversible
+        if(!original.esReversible()) throw new IllegalArgumentException(
+            "Transaccion no reversible");
+
+        // crear transaccion reverso
+        Transaccion transaccion = new Transaccion(
+            generarTransaccionId(),
+            TipoTransaccion.REVERSO,
+            original.getCuentaOrigen(),
+            original.getCuentaDestino(), 
+            original.getMonto(), 
+            "reverso de:" + original.getId());
+
+        // cargar cuentas y ejecutar reversion
+        if(original.getCuentaOrigen() != null && original.getCuentaDestino() != null){
+
+            Cuenta cuentaOrigen = cuentaRepository.buscarPorId(original.getCuentaOrigen())
+            .orElseThrow(()-> new IllegalArgumentException("Cuenta origen no encontrada"));
+
+            Cuenta cuentaDestino = cuentaRepository.buscarPorId(original.getCuentaDestino())
+            .orElseThrow(()-> new IllegalArgumentException(
+                "Cuenta destino no encontrada"));
+
+
+            // reverit segun el tipo
+            if(original.getTipo() == TipoTransaccion.TRANSFERENCIA){
+                cuentaDestino.transferir(original.getMonto(), cuentaOrigen);
+            }
+             else if(original.getTipo() == TipoTransaccion.DEPOSITO){
+                cuentaDestino.retirar(original.getMonto());
+            }
+            else if(original.getTipo() == TipoTransaccion.RETIRO){
+                cuentaOrigen.depositar(original.getMonto());
+            }
+
+            cuentaRepository.actualizar(cuentaOrigen);
+            cuentaRepository.actualizar(cuentaDestino);
+
+        }
+
+
+            original.revertir();
+            transaccion.completar();
+
+            transaccionRepository.guardar(original);
+            transaccionRepository.guardar(transaccion);
+
+            System.out.println("✅ Transacción revertida: " + original.getId());
+            return transaccion;
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error al revertir: " + e.getMessage());
+        }
+    }
+
+    
+
+
+
+    // METODOS AUXILIARES
 
     private TransferenciaResponse ejecutarEnDominio(Cuenta cuentaOrigen, Cuenta cuentaDestino, Dinero monto, String descripcion){
 
@@ -91,7 +232,7 @@ public class TransaccionService {
 
     }
 
-    //CREAR TRANSACCIÓN
+    
     private Transaccion crearTransaccion(Cuenta cuentaOrigen, Cuenta cuentaDestino, Dinero monto, String descripcion){
 
         TransaccionId transaccionId = generarTransaccionId();
@@ -106,7 +247,7 @@ public class TransaccionService {
         return new TransaccionId(id);
     }
 
-    // GUARDAR TODOS LOS CAMBIOS
+    
     private void guardarCambios(Cuenta cuentaOrigen, Cuenta cuentaDestino, Transaccion transaccion){
 
         cuentaRepository.actualizar(cuentaOrigen);
@@ -117,7 +258,7 @@ public class TransaccionService {
 
     }
 
-        //CREAR OBJETO DINERO
+    
     private Dinero crearMonto(TransferenciaRequest request) {
       try {
         // Convierte a mayúsculas por si acaso
@@ -133,6 +274,12 @@ public class TransaccionService {
         );
     }
     }
+
+
+
+
+
+
 
     // METODOS DE RESPUESTA
     private TransferenciaResponse respuestaExitosa(Transaccion transaccion){

@@ -78,6 +78,8 @@ public class CuentaRepositoryJpa implements CuentaRepository {
         
     }
 
+    
+
     @Override
     public void actualizar(Cuenta cuenta){
         guardar(cuenta);
