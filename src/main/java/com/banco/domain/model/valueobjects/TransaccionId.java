@@ -14,7 +14,7 @@ public class TransaccionId {
         String valorValidado = Objects.requireNonNull(valor,"El valor no puede ser nulo");
 
         //Validamos formato
-        if(!valor.matches("^TXN-\\\\d{4}-\\\\d{7}$")) throw new IllegalArgumentException(
+        if(!valor.matches("^TXN-\\d{4}-\\d{7}$")) throw new IllegalArgumentException(
             "Formato de Id de transaccion incorrecto: " +  valor);
 
             this.valor = valorValidado;

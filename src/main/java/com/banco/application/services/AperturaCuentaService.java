@@ -101,12 +101,18 @@ public class AperturaCuentaService {
 
     private void saldoInicialMinimo(Cuenta cuenta, BigDecimal monto, Moneda moneda){
 
-        Dinero saldoInicial = new Dinero(monto, moneda);
+         if (monto == null || monto.compareTo(BigDecimal.ZERO) <= 0) {
+        throw new IllegalArgumentException("Monto inválido: " + monto);
+    }
+
 
         //VALIDAR MONTO MÍNIMO (ejemplo: $100 para cuentas corrientes)
-        BigDecimal minimo = new BigDecimal("100.00");
+        BigDecimal minimo = new BigDecimal("100");
         if(monto.compareTo(minimo) < 0) throw new IllegalArgumentException(
             "Saldo inicial minimo $" + minimo + ". Se recibio $" + monto );
+
+
+        Dinero saldoInicial = new Dinero(monto, moneda);
 
         // DEPOSITAR EN LA CUENTA
         cuenta.depositar(saldoInicial);
@@ -146,8 +152,20 @@ public class AperturaCuentaService {
     }
 
     private TransaccionId generarIdTransaccion() {
-        String id = "TXN-APERTURA-" + System.currentTimeMillis();
-        return new TransaccionId(id);
+    // Formato requerido: TXN-2024-0000001
+    // Estructura: TXN-AAAA-NNNNNNN (7 dígitos)
+
+    int año = java.time.Year.now().getValue();
+
+    //Asegura 7 dígitos
+    long timestamp = System.currentTimeMillis();
+    long secuencia = timestamp % 10000000L;
+
+    String id = String.format("TXN-%d-%07d", año, secuencia);
+
+    System.out.println("ID generado: " + id + " (longitud: " + id.length() + ")");
+
+    return new TransaccionId(id);
     }
 
 
@@ -215,19 +233,19 @@ public class AperturaCuentaService {
 
         String codigoPais = "ARG";
         String codigoBanco = "017"; // Código ficticio de nuestro banco
-        String codigoSucursal = sucursal != null ? String.format("%03d", Integer.parseInt(sucursal)) : "001";
+        String codigoSucursal = sucursal != null
+         ? String.format("%03d", Integer.parseInt(sucursal)) : "001";
 
         // GENERAR SECUENCIA ÚNICA (en producción sería de una base de datos)
         long secuencia = System.currentTimeMillis() % 100000000L; // 8 dígitos
         String numeroSecuencial = String.format("%08d", secuencia);
 
         // CALCULAR DÍGITO VERIFICADOR (algoritmo simplificado)
-        String base = codigoBanco + codigoSucursal + numeroSecuencial;
+        String base = codigoBanco + codigoSucursal + numeroSecuencial + "0000000".substring(0, 7);
         int digitoVerificador = calcularDigitoVerificador(base);
 
         // CONSTRUIR NÚMERO COMPLETO
-        String numeroCompleto = String.format("%s-%s-%s-%s-%d",
-            codigoPais, codigoBanco, codigoSucursal, numeroSecuencial, digitoVerificador);
+        String numeroCompleto = codigoPais + base + digitoVerificador;
 
         //GENERAR NUMERO DE CUENTA 
         CuentaId cuentaId = CuentaId.newCuentaId(numeroCompleto);

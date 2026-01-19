@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 public final class CuentaId {
 
     // 🎯 FORMATO: Código país + 22 dígitos (similar IBAN argentino)
-    private static final String FORMATO = "AR\\d{22}";
+    private static final String FORMATO = "ARG\\d{22}";
     // VALIDA QUE EL FORMATO SEA EL CORRECTO
     private static final Pattern VALIDAR_FORMATO = Pattern.compile(FORMATO);
 
@@ -59,18 +59,18 @@ public final class CuentaId {
 
     public String getCodigoBanco() {
         // Ejemplo: "AR0290000000000000000000" → Banco "0290"
-        return valor.substring(2, 6);
+        return valor.substring(3, 6);
     }
 
     public String getCodigoSucursal() {
         // Ejemplo: "AR0290123400000000000000" → Sucursal "1234"
-        return valor.substring(6, 10);
+        return valor.substring(6, 9);
     }
 
     public String getTipoDeCuenta() {
         // Ejemplo: "00" → Cuenta en pesos - "01" → Caja de ahorro en dólares - "02" →
         // Cuenta corriente en dólares
-        return valor.substring(10, 12);
+        return valor.substring(9, 11);
     }
 
     public static String getFormatoEsperado() {
@@ -141,11 +141,11 @@ public final class CuentaId {
      * En sistema real, verificaría contra base de bancos autorizados
      */
     private static boolean esBancoValido(String valor) {
-        String codigoBanco = valor.substring(2, 6);
+        String codigoBanco = valor.substring(3, 6);
         // Ejemplo: solo permitimos algunos bancos
-        return codigoBanco.equals("0290") || // Banco de ejemplo
-                codigoBanco.equals("0150") || // Otro banco
-                codigoBanco.equals("0720"); // Otro banco
+        return codigoBanco.equals("017") || // Banco de ejemplo
+                codigoBanco.equals("015") || // Otro banco
+                codigoBanco.equals("072"); // Otro banco
     }
 
     // DETERMINAR TIPO DE CUENTA SEGÚN MONEDA

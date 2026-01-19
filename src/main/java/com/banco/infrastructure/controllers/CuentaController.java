@@ -49,7 +49,14 @@ public class CuentaController {
 
         return ResponseEntity
         .status(HttpStatus.OK)
-        .body(response);
+        .body(new AperturaCuentaResponse(
+            response.getCuentaId(), 
+            response.getClienteId(), 
+            response.getTipoCuenta(), 
+            response.getMoneda(), 
+            response.getSaldoInicial(), 
+            response.getFechaApertura(), 
+            "Cuenta creada exitosamente"));
     }
 
     @GetMapping()

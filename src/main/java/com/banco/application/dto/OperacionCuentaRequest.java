@@ -34,6 +34,27 @@ public class OperacionCuentaRequest {
         this.referencia = referencia;
     }
 
+    public String getCuentaId() {
+        return cuentaId;
+    }
 
+    public BigDecimal getMonto() {
+        return monto;
+    }
+
+    public String getMoneda() {
+        return moneda;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public String getReferencia() {
+        return referencia;
+    }
+
+
+    
     
 }
