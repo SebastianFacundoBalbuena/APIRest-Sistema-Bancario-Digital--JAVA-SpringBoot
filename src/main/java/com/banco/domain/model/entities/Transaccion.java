@@ -26,7 +26,7 @@ public class Transaccion {
     // CONSTRUCTOR PRINCIPAL
 
     public Transaccion(TransaccionId transaccionId, TipoTransaccion tipoTransaccion, CuentaId cuentaOrigen,
-        CuentaId cuentaDestino, Dinero monto, String descripcion){
+        CuentaId cuentaDestino,Dinero monto, String descripcion){
 
             // VALIDACIONES DE INTEGRIDAD
             this.transaccionId = Objects.requireNonNull(transaccionId,"No se permite valor nulo");
@@ -40,6 +40,27 @@ public class Transaccion {
             this.fechaDeCreacion = LocalDateTime.now();
             this.estado = EstadoTransaccion.PENDIENTE;
             this.referencia = generarReferencia();
+
+            validarConsistencia();
+            
+}
+
+
+    public Transaccion(TransaccionId transaccionId, TipoTransaccion tipoTransaccion, CuentaId cuentaOrigen,
+        CuentaId cuentaDestino, LocalDateTime fechaDeCreacion,EstadoTransaccion estado,String referencia , Dinero monto, String descripcion){
+
+            // VALIDACIONES DE INTEGRIDAD
+            this.transaccionId = Objects.requireNonNull(transaccionId,"No se permite valor nulo");
+            this.tipoTransaccion = Objects.requireNonNull(tipoTransaccion,"No se permite valor nulo");
+            this.monto = Objects.requireNonNull(monto,"No se permite nulo");
+            this.descripcion = Objects.requireNonNull(descripcion,"No se permite nulo");
+
+            this.cuentaOrigen = cuentaOrigen;
+            this.cuentaDestino = cuentaDestino;
+
+            this.fechaDeCreacion = fechaDeCreacion;
+            this.estado = estado;
+            this.referencia = referencia;
 
             validarConsistencia();
             
@@ -132,9 +153,19 @@ public class Transaccion {
     }
 
     public boolean esReversible() {
-        return this.estado == EstadoTransaccion.COMPLETADA &&
-               this.tipoTransaccion != TipoTransaccion.COMISION && // Ejemplo de regla
-               !esDemasiadoAntigua(); // Otra regla de negocio
+
+        // reglas de negocio
+        if(this.estado != EstadoTransaccion.COMPLETADA){
+            return false;
+        }
+        if(this.tipoTransaccion == TipoTransaccion.COMISION){
+            return false;
+        }
+        if(esDemasiadoAntigua() == true){
+            return false;
+        }
+
+        return true;
     }
 
 

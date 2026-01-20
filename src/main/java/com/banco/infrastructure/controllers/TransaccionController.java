@@ -34,7 +34,7 @@ public class TransaccionController {
     }
 
     
-    @PostMapping("transferir")
+    @PostMapping("/transferir")
     public ResponseEntity<TransferenciaResponse> transferir(@Valid @RequestBody TransferenciaRequest request){
 
         try {
@@ -65,7 +65,7 @@ public class TransaccionController {
                 transaccion.getMonto().getMonto(),
                 transaccion.getMonto().getMoneda().getNombre(), 
                 transaccion.getFechaCreacion(), 
-                transaccion.getCuentaOrigen().getValor(), 
+                transaccion.getCuentaOrigen() != null ? transaccion.getCuentaOrigen().getValor() : null, 
                 transaccion.getTipo().name(), "Deposito exitoso"));
 
         } catch (Exception e) {
@@ -90,8 +90,8 @@ public class TransaccionController {
                 transaccion.getMonto().getMonto(), 
                 transaccion.getMonto().getMoneda().getNombre(), 
                 transaccion.getFechaCreacion(), 
-                transaccion.getCuentaOrigen().getValor(), 
-                transaccion.getTipo().name(), "Retiro exitoso"));
+                transaccion.getCuentaOrigen() != null ? transaccion.getCuentaOrigen().getValor(): null, 
+                transaccion.getTipo().name(), "Retiro exitoso de: " + "$" + transaccion.getMonto().getMonto().setScale(2)));
 
         } catch (Exception e) {
 

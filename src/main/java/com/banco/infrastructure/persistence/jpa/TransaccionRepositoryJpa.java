@@ -67,7 +67,9 @@ public class TransaccionRepositoryJpa implements TransaccionRepository {
     @Override
     public void guardar(Transaccion transaccion){
 
-        TransaccionEntity entity = transaccionMapper.aEntity(transaccion);
+        TransaccionEntity transaccionExistente = transaccionJpaRepository
+        .findByTransaccionId(transaccion.getId().getValor()).orElse(null);
+        TransaccionEntity entity = transaccionMapper.aEntity(transaccion, transaccionExistente);
 
         if(entity != null){
         transaccionJpaRepository.save(entity);

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 
 
@@ -15,7 +16,7 @@ public class OperacionCuentaRequest {
     @NotBlank(message = "El id de la cuenta es obligatorio")
     private String cuentaId;
 
-    @NotBlank(message = "El monto es obligatorio")
+    @NotNull(message = "El monto es obligatorio")
     @DecimalMin(value = "0.01", message = "El monto debe ser mayor a 0")
     private BigDecimal monto;
 

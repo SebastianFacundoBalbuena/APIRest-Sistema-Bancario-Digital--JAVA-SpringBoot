@@ -7,11 +7,10 @@ import com.banco.application.dto.AperturaCuentaRequest;
 import com.banco.application.dto.AperturaCuentaResponse;
 import com.banco.application.dto.ConsultaSaldoRequest;
 import com.banco.application.dto.ConsultaSaldoResponse;
-import com.banco.application.dto.TransferenciaRequest;
-import com.banco.application.dto.TransferenciaResponse;
+
 import com.banco.application.services.AperturaCuentaService;
 import com.banco.application.services.ConsultaSaldoService;
-import com.banco.application.services.TransaccionService;
+
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,15 +28,14 @@ public class CuentaController {
     // ATRIBUTOS
     private final AperturaCuentaService aperturaCuentaService;
     private final ConsultaSaldoService consultaSaldoService;
-    private final TransaccionService transaccionService;
 
 
 
-    public CuentaController(AperturaCuentaService aperturaCuentaService, ConsultaSaldoService consultaSaldoService,
-            TransaccionService transaccionService) {
+
+    public CuentaController(AperturaCuentaService aperturaCuentaService, ConsultaSaldoService consultaSaldoService) {
         this.aperturaCuentaService = aperturaCuentaService;
         this.consultaSaldoService = consultaSaldoService;
-        this.transaccionService = transaccionService;
+
 
     }
 
@@ -69,16 +67,7 @@ public class CuentaController {
         .ok(response);
     }
 
-    @PostMapping("/deposito")
-    public ResponseEntity<TransferenciaResponse> depositar(@Valid @RequestBody TransferenciaRequest request){
  
-        TransferenciaResponse response = transaccionService.ejecutarTransferencia(request);
-
-        return ResponseEntity
-        .ok(response);
-    }
-
-    
     
     
 }

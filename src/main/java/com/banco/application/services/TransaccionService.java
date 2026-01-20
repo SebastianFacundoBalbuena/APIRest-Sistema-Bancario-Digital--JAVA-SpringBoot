@@ -287,11 +287,11 @@ public class TransaccionService {
         return new TransferenciaResponse(
             transaccion.getId().toString(),
              "COMPLETADA",
-              transaccion.getMonto().getMonto(), 
+              transaccion.getMonto().getMonto().setScale(2), 
               transaccion.getMonto().getMoneda().toString(), 
             transaccion.getFechaCreacion(), 
-            transaccion.getCuentaOrigen().toString(), 
-            transaccion.getCuentaDestino().toString(),
+            transaccion.getCuentaOrigen().getValor(), 
+            transaccion.getCuentaDestino().getValor(),
              "Transaccion realizada exitosamente");
     }
 

@@ -35,10 +35,21 @@ public class Cuenta {
 
         // VALIDACIONES DE SEGURIDAD - Nunca aceptamos valores nulos
         this.cuentaId = Objects.requireNonNull(cuentaId, "El id de cuenta no puede ser nulo");
+
         this.clienteId = Objects.requireNonNull(clienteId,"El id de cliente no puede ser nulo");
+
         this.moneda = Objects.requireNonNull(moneda,"la moneda no puede ser nula");
-        this.saldo = Objects.requireNonNull(saldo,"el saldo no puede ser nulo");
+
         this.activa = Objects.requireNonNull(activa,"se requiere un valor para -activa-");
+
+        if (!saldo.getMoneda().equals(moneda)) {
+        throw new IllegalArgumentException(
+        "El saldo debe ser en " + moneda + ". Se recibió: " + saldo.getMoneda());
+        }
+        else {
+
+            this.saldo = saldo;
+        }
 
 
     }
@@ -52,6 +63,12 @@ public class Cuenta {
         //VALIDACIONES EN CADENA
         validarPuedeOperar();  // Cuenta debe estar activa
         validarMontoPositivo(monto);  // Monto debe ser positivo
+
+        if (!monto.getMoneda().equals(this.moneda)) {
+        throw new IllegalArgumentException(
+            "No se puede depositar " + monto.getMoneda() + 
+            " en cuenta de " + this.moneda);
+    }
 
         Dinero saldoAnterior = this.saldo;
         this.saldo = this.saldo.sumar(monto);

@@ -26,21 +26,27 @@ public class CuentaMapper {
         Dinero saldo = Dinero.nuevo(entity.getSaldo(), moneda);
         boolean activa = entity.getActiva();
         
+        
         // Creamos la entidad de dominio con todos sus valores
+        
 
         return new Cuenta(cuentaId, clienteId, moneda, saldo, activa);
 
     }
 
-    public CuentaEntity aEntity(Cuenta cuenta){
+    public CuentaEntity aEntity(Cuenta cuenta, CuentaEntity cuentaExistente){
 
-        CuentaEntity cuentaEntity = new CuentaEntity();
+        if(cuentaExistente == null){
+            cuentaExistente = new CuentaEntity();
+        }
 
-        cuentaEntity.setNumeroCuenta(cuenta.getCuentaId().getValor());
-        cuentaEntity.setClienteId(cuenta.getClienteId().getValor());
-        cuentaEntity.setMoneda(cuenta.getMoneda().name());
-        cuentaEntity.setSaldo(cuenta.getSaldo().getMonto());
-        cuentaEntity.setActiva(cuenta.getActiva());
-        return cuentaEntity;
+
+        
+        cuentaExistente.setNumeroCuenta(cuenta.getCuentaId().getValor());
+        cuentaExistente.setClienteId(cuenta.getClienteId().getValor());
+        cuentaExistente.setMoneda(cuenta.getMoneda().name());
+        cuentaExistente.setSaldo(cuenta.getSaldo().getMonto());
+        cuentaExistente.setActiva(cuenta.getActiva());
+        return cuentaExistente;
     }
 }

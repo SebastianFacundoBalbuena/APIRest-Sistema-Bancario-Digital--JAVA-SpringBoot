@@ -54,21 +54,30 @@ public class CuentaRepositoryJpa implements CuentaRepository {
     @Override
     public Optional<Cuenta> buscarPorId(CuentaId cuentaId){
 
+        System.out.println("CuentaId recibido: " + cuentaId);
+        System.out.println("Valor del CuentaId: " + cuentaId.getValor());
         // Convertimos el Value Object a string para buscar en BD
         String numeroCuenta = cuentaId.getValor();
 
         // Buscamos en la BD usando Spring Data JPA
         Optional<CuentaEntity> entityOpt = cuentaJpaRepository.findByNumeroCuenta(numeroCuenta);
 
+        System.out.println("¿Encontrado en BD? " + entityOpt.isPresent());
         // retornamos la cuenta convertida a DOMINIO
-        return entityOpt.map(entity -> cuentaMapper.aDominio(entity));
+
+        Optional<Cuenta> cuentaa = entityOpt.map(entity -> cuentaMapper.aDominio(entity));
+
+        return cuentaa;
     }
 
     @Override
     public void guardar(Cuenta cuenta){
         
-        // Convertimos a Entity
-        CuentaEntity entity = cuentaMapper.aEntity(cuenta);
+        // buscar o Convertimos a Entity
+
+        CuentaEntity entityExistente = cuentaJpaRepository.findByNumeroCuenta(cuenta.getCuentaId().getValor()).orElse(null);
+        CuentaEntity entity = cuentaMapper.aEntity(cuenta, entityExistente);
+        
 
         if(entity != null){ 
             cuentaJpaRepository.save(entity);
