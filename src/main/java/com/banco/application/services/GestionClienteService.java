@@ -169,7 +169,7 @@ public class GestionClienteService {
     public void validarEmail(String email){
 
         if(clienteRepository.existePorEmail(email)){
-            throw new IllegalArgumentException("El email: " + email + " ya esta registrado");
+            throw new IllegalArgumentException("El Email: " + email + " ya esta registrado");
         }
     }
 
@@ -201,7 +201,7 @@ public class GestionClienteService {
     public void validarCuentaAgregada(String clienteId, Cliente cliente){
 
         if(cliente.getCuentas().contains(clienteId)) throw new IllegalArgumentException(
-            "La cuenta ya esta asignada a este cliente");
+            "La cuenta ya esta asignada a este cliente ");
     }
 
         
