@@ -21,6 +21,7 @@ public interface CuentaRepository {
     // BUSCAR CUENTAS POR CLIENTES
     List<Cuenta> buscarPorCliente(ClienteId ClienteId);
 
+
     //ACTUALIZAR CUENTA
     void actualizar(Cuenta cuenta);
 

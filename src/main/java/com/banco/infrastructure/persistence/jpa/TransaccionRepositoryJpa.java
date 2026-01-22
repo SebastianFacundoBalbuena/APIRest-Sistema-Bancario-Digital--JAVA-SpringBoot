@@ -10,12 +10,15 @@ import org.springframework.stereotype.Repository;
 import com.banco.application.port.out.TransaccionRepository;
 import com.banco.domain.model.entities.Cuenta;
 import com.banco.domain.model.entities.Transaccion;
+import com.banco.domain.model.valueobjects.CuentaId;
 import com.banco.domain.model.valueobjects.TransaccionId;
+import com.banco.infrastructure.persistence.entities.CuentaEntity;
 import com.banco.infrastructure.persistence.entities.TransaccionEntity;
 import com.banco.infrastructure.persistence.mappers.TransaccionMapper;
 
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 import java.time.LocalDateTime;
 
 
@@ -35,6 +38,7 @@ public class TransaccionRepositoryJpa implements TransaccionRepository {
         //Busca transacciones donde la cuenta sea origen O destino
         List<TransaccionEntity> findByCuentaOrigenIdOrCuentaDestinoId(String cuentaOrigen, String cuentaDestino);
 
+        List<TransaccionEntity> findByNumeroCuentas(String numeroCuenta);
         
         List<TransaccionEntity> findByReferenciaContainingIgnoreCase(String referencia);
 
@@ -91,6 +95,28 @@ public class TransaccionRepositoryJpa implements TransaccionRepository {
         return entities.stream()
                 .map(transaccionMapper::aDominio)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Transaccion> buscarCuentas(CuentaId cuentaId){
+
+        System.out.println("CuentaId recibido: " + cuentaId);
+        System.out.println("Valor del CuentaId: " + cuentaId.getValor());
+        // Convertimos el Value Object a string para buscar en BD
+        String numeroCuenta = cuentaId.getValor();
+
+        // Buscamos en la BD usando Spring Data JPA
+        List<TransaccionEntity> entityOpt = transaccionJpaRepository.findByNumeroCuentas(numeroCuenta);
+
+        System.out.println("¿Encontrado en BD? " + entityOpt.isEmpty());
+        // retornamos la cuenta convertida a DOMINIO
+
+        return entityOpt.stream()
+        .map(transaccionMapper::aDominio)
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
+
+        
     }
 
     @Override

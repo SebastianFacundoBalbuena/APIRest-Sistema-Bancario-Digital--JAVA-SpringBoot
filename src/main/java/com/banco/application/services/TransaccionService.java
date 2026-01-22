@@ -2,7 +2,11 @@ package com.banco.application.services;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
+import com.banco.application.dto.MovimientoDTO;
 import com.banco.application.dto.TransferenciaRequest;
 import com.banco.application.dto.TransferenciaResponse;
 import com.banco.application.port.out.CuentaRepository;
@@ -201,6 +205,23 @@ public class TransaccionService {
         }
     }
 
+    public List<MovimientoDTO> consultarMovimiento(String cuentaStrg){
+
+        try {
+            
+            CuentaId cuenta = CuentaId.newCuentaId(cuentaStrg);
+            List<Transaccion> transaccion = transaccionRepository.buscarCuentas(cuenta);
+
+            return transaccion.stream()
+            .map(this::convertirAmovimientoDto)
+            .collect(Collectors.toList());
+
+        } catch (Exception e) {
+
+            throw new IllegalArgumentException("Hubo un error al intentar consultar movimientos");
+        }
+    }
+
     
 
 
@@ -273,6 +294,20 @@ public class TransaccionService {
             "Use: EUR, USD o ARG"
         );
     }
+
+    }
+
+    public MovimientoDTO convertirAmovimientoDto(Transaccion transaccion){
+
+        return new MovimientoDTO(
+            transaccion.getId().getValor(), 
+            transaccion.getTipo().name(), 
+            transaccion.getFechaCreacion(), 
+            transaccion.getMonto().getMonto(), 
+            transaccion.getDescripcion(), 
+            transaccion.getReferencia(), 
+            transaccion.getCuentaOrigen() != null ? transaccion.getCuentaOrigen().getValor() : null, 
+            null);
     }
 
 

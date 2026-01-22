@@ -93,8 +93,8 @@ public class AperturaCuentaService {
         Cuenta cuenta = new Cuenta(cuentaId, clienteId, moneda);
 
         System.out.println("🏦 Cuenta creada: " + cuentaId + 
-                         " - Tipo: " + tipoCuenta + 
-                         " - Moneda: " + moneda);
+        " - Tipo: " + tipoCuenta + 
+        " - Moneda: " + moneda);
 
         return cuenta;
     }
@@ -166,6 +166,31 @@ public class AperturaCuentaService {
     System.out.println("ID generado: " + id + " (longitud: " + id.length() + ")");
 
     return new TransaccionId(id);
+
+    }
+
+    public void cerrarCuenta(String cuentaString){
+
+
+        try {
+            
+        CuentaId cuentaId = CuentaId.newCuentaId(cuentaString);
+
+        Cuenta cuenta = cuentaRepository.buscarPorId(cuentaId).orElseThrow(()-> new 
+        IllegalArgumentException("Cuenta no encontrada"));
+
+        cuenta.validarPuedeCerrar();
+
+        cuenta.cerrar();
+
+        cuentaRepository.actualizar(cuenta);
+
+        System.out.println("✅ Cuenta cerrada: " + cuentaId);
+
+        } catch (Exception e) {
+            
+            throw new IllegalArgumentException("Error cerrando cuenta: " + e.getMessage());
+        }
     }
 
 

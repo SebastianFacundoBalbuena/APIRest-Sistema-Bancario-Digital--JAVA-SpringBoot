@@ -153,5 +153,31 @@ public class Cuenta {
         if(this.equals(cuentaDestino)) throw new IllegalArgumentException("No se puede transferir a la misma cuenta");
     }
 
+    public void cerrar() {
+    validarPuedeCerrar();
+    this.activa = false;
+    
+}
+
+    public void validarPuedeCerrar() {
+    if (!tieneSaldoCero()) {
+        throw new IllegalStateException(
+            "No se puede cerrar cuenta con saldo: " + saldo
+        );
+    }
+    if (!estaActiva()) {
+        throw new IllegalStateException("La cuenta ya está cerrada");
+    }
+    }
+
+    public boolean tieneSaldoCero() {
+    return saldo.esCero();
+}
+
+    public boolean estaActiva() {
+    return activa; 
+}
+
+
 
 }

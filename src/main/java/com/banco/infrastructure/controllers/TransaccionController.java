@@ -3,6 +3,7 @@ package com.banco.infrastructure.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.banco.application.dto.MovimientoDTO;
 import com.banco.application.dto.OperacionCuentaRequest;
 import com.banco.application.dto.OperacionCuentaResponse;
 import com.banco.application.dto.TransferenciaRequest;
@@ -12,7 +13,11 @@ import com.banco.domain.model.entities.Transaccion;
 
 import jakarta.validation.Valid;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -118,6 +123,22 @@ public class TransaccionController {
         } catch (Exception e) {
 
             throw new IllegalArgumentException("Hubo un problema al intentar revertir: " +e.getMessage());
+        }
+    }
+
+    @GetMapping("/{Id}/movimientos")
+    public ResponseEntity<?> obtenerMovimientos(@PathVariable String cuentaString){
+
+        try {
+
+            List<MovimientoDTO> movimiento = transaccionService.consultarMovimiento(cuentaString);
+
+            return ResponseEntity.ok().body(movimiento);
+            
+
+        } catch (Exception e) {
+
+            throw new IllegalArgumentException("Error al querer obtener movimientos: " + e.getMessage());
         }
     }
     

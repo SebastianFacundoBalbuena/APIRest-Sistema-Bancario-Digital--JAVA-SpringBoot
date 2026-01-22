@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import com.banco.domain.model.entities.Cuenta;
 import com.banco.domain.model.entities.Transaccion;
+import com.banco.domain.model.valueobjects.CuentaId;
 import com.banco.domain.model.valueobjects.TransaccionId;
 
 public interface TransaccionRepository {
@@ -18,6 +19,9 @@ public interface TransaccionRepository {
 
     // BUSCAR POR CUENTA
     List<Transaccion> buscarPorCuenta(Cuenta cuenta, LocalDateTime desde, LocalDateTime hasta);
+
+    //BUSCAR CUENTAS POR NUMERO DE CUENTA
+    List<Transaccion> buscarCuentas(CuentaId cuentaId);
 
     //BUSCAR POR REFERENCIA
     List<Transaccion> buscarPorReferencia(String referencia);

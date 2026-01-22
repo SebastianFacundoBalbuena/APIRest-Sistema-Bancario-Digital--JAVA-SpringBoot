@@ -21,6 +21,7 @@ import java.util.List;
 
 
 
+
 @Repository
 @Transactional
 public class CuentaRepositoryJpa implements CuentaRepository {
@@ -32,6 +33,7 @@ public class CuentaRepositoryJpa implements CuentaRepository {
         // COMO existsBy - findBy etc + nombre del atributo
         // JPA ya conoce estas palabras y las detecta automaticamente sabiendo que queremos
         Optional<CuentaEntity> findByNumeroCuenta(String numeroCuenta);
+
 
         boolean existsByNumeroCuenta(String numeroCuenta);
 
@@ -69,6 +71,7 @@ public class CuentaRepositoryJpa implements CuentaRepository {
 
         return cuentaa;
     }
+
 
     @Override
     public void guardar(Cuenta cuenta){
