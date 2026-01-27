@@ -6,19 +6,21 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
+
+
+
+
 //@EnableJpaRepositories: Le dice a Spring dónde buscar interfaces de repositorio
-// @EntityScan: Le dice a Spring dónde buscar entidades JPA
-// @EnableTransactionManagement: Habilita transacciones automáticas
-
-
 @Configuration
 @EnableJpaRepositories(
   basePackages = "com.banco.infrastructure.persistence.jpa",
   considerNestedRepositories = true
 )
 
+// @EntityScan: Le dice a Spring dónde buscar entidades JPA
 @EntityScan(
     basePackages = "com.banco.infrastructure.persistence.entities" )
 
+    // @EnableTransactionManagement: Habilita transacciones automáticas
 @EnableTransactionManagement
 public class PersistenceConfig{}
