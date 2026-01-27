@@ -157,15 +157,21 @@ public class Cuenta {
     validarPuedeCerrar();
     this.activa = false;
     
-}
+    }
+
+    public void activarCuenta() {
+
+    this.activa = true;
+    
+    }
 
     public void validarPuedeCerrar() {
-    if (!tieneSaldoCero()) {
+    if (tieneSaldoCero() == true) {
         throw new IllegalStateException(
             "No se puede cerrar cuenta con saldo: " + saldo
         );
     }
-    if (!estaActiva()) {
+    if (estaActiva() == false) {
         throw new IllegalStateException("La cuenta ya está cerrada");
     }
     }

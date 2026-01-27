@@ -4,7 +4,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.banco.application.dto.AperturaCuentaRequest;
-import com.banco.application.dto.MovimientoDTO;
 import com.banco.application.dto.AperturaCuentaResponse;
 import com.banco.application.dto.ConsultaSaldoRequest;
 import com.banco.application.dto.ConsultaSaldoResponse;
@@ -20,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -72,12 +71,12 @@ public class CuentaController {
         .ok(response);
     }
 
-    @DeleteMapping("/{Id}")
-    public ResponseEntity<?> cerrarCuentas(@PathVariable String cuentaString){
+    @DeleteMapping("/{cuentaStringId}")
+    public ResponseEntity<?> cerrarCuentas(@PathVariable String cuentaStringId){
 
         try {
 
-            aperturaCuentaService.cerrarCuenta(cuentaString);
+            aperturaCuentaService.cerrarCuenta(cuentaStringId);
 
             return ResponseEntity.ok().build();
 
@@ -85,6 +84,22 @@ public class CuentaController {
             throw new IllegalArgumentException("Hubo un error al intentar cerrar la cuenta: " + e.getMessage());
         }
     }
+
+    @PostMapping("/{cuentaStringId}")
+    public ResponseEntity<Void> abrirCuenta(@PathVariable String cuentaStringId){
+
+        try {
+            
+            aperturaCuentaService.abrirCuenta(cuentaStringId);
+
+            return ResponseEntity.ok().build();
+
+        } catch (Exception e) {
+
+            throw new IllegalArgumentException("Hubo un error: " + e.getMessage());
+        }
+    }
+    
     
 
  

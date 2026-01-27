@@ -14,7 +14,7 @@ import com.banco.domain.model.entities.Transaccion;
 import jakarta.validation.Valid;
 
 import java.util.List;
-import java.util.Map;
+
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -126,12 +126,12 @@ public class TransaccionController {
         }
     }
 
-    @GetMapping("/{Id}/movimientos")
-    public ResponseEntity<?> obtenerMovimientos(@PathVariable String cuentaString){
+    @GetMapping("/{cuentaStringId}/movimientos")
+    public ResponseEntity<?> obtenerMovimientos(@PathVariable String cuentaStringId){
 
         try {
 
-            List<MovimientoDTO> movimiento = transaccionService.consultarMovimiento(cuentaString);
+            List<MovimientoDTO> movimiento = transaccionService.consultarMovimiento(cuentaStringId);
 
             return ResponseEntity.ok().body(movimiento);
             

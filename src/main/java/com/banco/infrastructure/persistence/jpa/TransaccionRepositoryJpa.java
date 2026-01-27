@@ -12,7 +12,7 @@ import com.banco.domain.model.entities.Cuenta;
 import com.banco.domain.model.entities.Transaccion;
 import com.banco.domain.model.valueobjects.CuentaId;
 import com.banco.domain.model.valueobjects.TransaccionId;
-import com.banco.infrastructure.persistence.entities.CuentaEntity;
+
 import com.banco.infrastructure.persistence.entities.TransaccionEntity;
 import com.banco.infrastructure.persistence.mappers.TransaccionMapper;
 
@@ -38,7 +38,7 @@ public class TransaccionRepositoryJpa implements TransaccionRepository {
         //Busca transacciones donde la cuenta sea origen O destino
         List<TransaccionEntity> findByCuentaOrigenIdOrCuentaDestinoId(String cuentaOrigen, String cuentaDestino);
 
-        List<TransaccionEntity> findByNumeroCuentas(String numeroCuenta);
+        List<TransaccionEntity> findByCuentaOrigenId(String numeroCuenta);
         
         List<TransaccionEntity> findByReferenciaContainingIgnoreCase(String referencia);
 
@@ -106,7 +106,7 @@ public class TransaccionRepositoryJpa implements TransaccionRepository {
         String numeroCuenta = cuentaId.getValor();
 
         // Buscamos en la BD usando Spring Data JPA
-        List<TransaccionEntity> entityOpt = transaccionJpaRepository.findByNumeroCuentas(numeroCuenta);
+        List<TransaccionEntity> entityOpt = transaccionJpaRepository.findByCuentaOrigenId(numeroCuenta);
 
         System.out.println("¿Encontrado en BD? " + entityOpt.isEmpty());
         // retornamos la cuenta convertida a DOMINIO

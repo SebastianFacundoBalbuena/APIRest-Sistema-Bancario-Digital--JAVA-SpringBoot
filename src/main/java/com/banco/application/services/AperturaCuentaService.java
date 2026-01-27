@@ -194,6 +194,29 @@ public class AperturaCuentaService {
     }
 
 
+    public void abrirCuenta(String cuentaString){
+
+
+        try {
+            
+        CuentaId cuentaId = CuentaId.newCuentaId(cuentaString);
+
+        Cuenta cuenta = cuentaRepository.buscarPorId(cuentaId).orElseThrow(()-> new 
+        IllegalArgumentException("Cuenta no encontrada"));
+
+        cuenta.activarCuenta();
+
+        cuentaRepository.actualizar(cuenta);
+
+        System.out.println("✅ Cuenta activada nuevamente: " + cuentaId);
+
+        } catch (Exception e) {
+            
+            throw new IllegalArgumentException("Error activando cuenta: " + e.getMessage());
+        }
+    }
+
+
 
 
 

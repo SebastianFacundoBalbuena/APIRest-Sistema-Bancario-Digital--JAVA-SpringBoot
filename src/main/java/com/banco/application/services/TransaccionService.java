@@ -263,9 +263,12 @@ public class TransaccionService {
     }
 
     //GENERAR ID DE TRANSACCIÓN
-    private TransaccionId generarTransaccionId(){
-        String id = "TXN-" + LocalDateTime.now().getYear() + "-" + String.format("%07d", (int)Math.random() * 10000000);
-        return new TransaccionId(id);
+    private TransaccionId generarTransaccionId() {
+    
+    int randomNum = (int)(Math.random() * 10000000);
+    String id = "TXN-" + LocalDateTime.now().getYear() + "-" + 
+    String.format("%07d", randomNum);
+    return new TransaccionId(id);
     }
 
     
