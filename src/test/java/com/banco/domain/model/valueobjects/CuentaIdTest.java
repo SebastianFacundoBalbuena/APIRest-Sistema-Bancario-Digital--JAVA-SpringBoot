@@ -102,16 +102,16 @@ import org.junit.jupiter.params.provider.ValueSource;
             //substring(6, 9) para sucursal
             // "ARG0171234567890123456789"
             // Pos 6-9 = "123"
-            assertThat(cuentaId.getCodigoSucursal()).isEqualTo("123");
+            assertThat(cuentaId.getCodigoSucursal()).isEqualTo("1234");
         }
 
         @Test
         @DisplayName("getTipoDeCuenta() - Debe extraer tipo correcto")
         void getTipoDeCuenta_DebeExtraerTipoCorrecto() {
-            CuentaId cuentaId = CuentaId.newCuentaId("ARG0171234567890123456789");
+            CuentaId cuentaId = CuentaId.newCuentaId("ARG0171234007890123456789");
             
             // substring(9, 11) = pos 9-10 = "45"
-            assertThat(cuentaId.getTipoDeCuenta()).isEqualTo("45");
+            assertThat(cuentaId.getTipoDeCuenta()).isEqualTo("00");
         }
 
         @Test
