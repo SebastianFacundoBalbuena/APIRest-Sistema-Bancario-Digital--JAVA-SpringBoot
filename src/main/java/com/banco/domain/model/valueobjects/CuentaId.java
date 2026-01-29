@@ -64,13 +64,12 @@ public final class CuentaId {
 
     public String getCodigoSucursal() {
         // Ejemplo: "AR0290123400000000000000" → Sucursal "1234"
-        return valor.substring(6, 9);
+        return valor.substring(6, 10);
     }
 
     public String getTipoDeCuenta() {
-        // Ejemplo: "00" → Cuenta en pesos - "01" → Caja de ahorro en dólares - "02" →
-        // Cuenta corriente en dólares
-        return valor.substring(9, 11);
+        // Ejemplo: "00" → Cuenta en pesos - "01" → Caja de ahorro en dólares - "02" 
+        return valor.substring(10, 12);
     }
 
     public static String getFormatoEsperado() {
@@ -165,27 +164,27 @@ public final class CuentaId {
     // 🎲 GENERAR NÚMERO ALEATORIO DE CUENTA
     private static String generarNumeroAleatorio() {
         long numero = (long) (Math.random() * 10_000_000_000L);
-        return String.format("%010d", numero);
+        return String.format("%011d", numero);
     }
 
 
 
     /**
-     * 🏭 MÉTODO FÁBRICA PARA CREAR NUEVAS CUENTAS
+     *  MÉTODO FÁBRICA PARA CREAR NUEVAS CUENTAS
      * Genera cuenta con formato válido para nuevo cliente
      * 
-     * @param codigoBanco    Código de 4 dígitos del banco
-     * @param codigoSucursal Código de 4 dígitos de sucursal
-     * @param moneda         Moneda de la cuenta (afecta el tipo de cuenta)
-     * @return Nueva CuentaId válida
+     * param codigoBanco    Código de 4 dígitos del banco
+     * param codigoSucursal Código de 4 dígitos de sucursal
+     * param moneda         Moneda de la cuenta (afecta el tipo de cuenta)
+     * return Nueva CuentaId válida
      */
     public static CuentaId generarNueva(int codigoBanco, int codigoSucursal, Moneda moneda) {
-        // 🎯 ESTRUCTURA: AR + Banco(4) + Sucursal(4) + Tipo(2) + Numero(10) + DV(2)
-        String bancoStr = String.format("%04d", codigoBanco);
+        //  ESTRUCTURA: ARG + Banco(3) + Sucursal(4) + Tipo(2) + Numero(10) + DV(2)
+        String bancoStr = String.format("%03d", codigoBanco);
         String sucursalStr = String.format("%04d", codigoSucursal);
         String tipoCuenta = obtenerTipoCuentaPorMoneda(moneda);
         String numero = generarNumeroAleatorio();
-        String sinDigitoVerificador = "AR" + bancoStr + sucursalStr + tipoCuenta + numero;
+        String sinDigitoVerificador = "ARG" + bancoStr + sucursalStr + tipoCuenta + numero;
 
         String digitoVerificador = calcularDigitoVerificador(sinDigitoVerificador);
 
