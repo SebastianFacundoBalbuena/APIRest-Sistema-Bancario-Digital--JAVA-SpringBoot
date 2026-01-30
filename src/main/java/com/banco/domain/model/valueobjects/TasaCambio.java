@@ -10,14 +10,14 @@ public class TasaCambio {
     private final Moneda monedaDestino;
     private final BigDecimal tasa;
 
-    // 🎯 CONFIGURACIÓN PARA CÁLCULOS PRECISOS
+    //  CONFIGURACIÓN PARA CÁLCULOS PRECISOS
     private static final int ESCALA_TASAS = 8;
     private static final RoundingMode MODO_REDONDEO = RoundingMode.HALF_EVEN;
 
 
     //CONSTRUCTOR PRIVADO
         private TasaCambio(Moneda monedaOrigen, Moneda monedaDestino, BigDecimal tasa) {
-        // 🛡️ VALIDACIONES
+        //  VALIDACIONES
         if (monedaOrigen == null || monedaDestino == null) {
             throw new IllegalArgumentException("Las monedas no pueden ser nulas");
         }
@@ -26,7 +26,7 @@ public class TasaCambio {
             throw new IllegalArgumentException("La tasa debe ser un número positivo: " + tasa);
         }
         
-        // 🎯 No permitir tasa de misma moneda (sería 1.0 siempre)
+        // No permitir tasa de misma moneda 
         if (monedaOrigen == monedaDestino) {
             throw new IllegalArgumentException("No se necesita tasa para la misma moneda");
         }
