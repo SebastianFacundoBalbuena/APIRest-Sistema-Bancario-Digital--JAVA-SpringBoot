@@ -6,7 +6,7 @@ public enum Moneda {
 
     // - false: EUR, USD → siempre usan decimales (efectivo y digital)
     //- true: ARS → digital con decimales, físico sin decimales  
-    EUR("Euro","€", 2, false),
+    EUR("Euros","€", 2, false),
     USD("Dolar", "$",2, false),
     ARG("Peso Argentino","$",2, true);
 
