@@ -6,48 +6,48 @@ import java.util.regex.Pattern;
 
 public final class CuentaId {
 
-    // 🎯 FORMATO: Código país + 22 dígitos (similar IBAN argentino)
+    //FORMATO: Código país + 22 dígitos (similar IBAN argentino)
     private static final String FORMATO = "ARG\\d{22}";
     // VALIDA QUE EL FORMATO SEA EL CORRECTO
     private static final Pattern VALIDAR_FORMATO = Pattern.compile(FORMATO);
 
     private final String valor;
 
-    // 🏗️ CONSTRUCTOR PRIVADO - Validación completa
+    //CONSTRUCTOR PRIVADO - Validación completa
     private CuentaId(String valor) {
 
-        // 🛡️ VALIDACIONES EN CONSTRUCTOR
+        // VALIDACIONES EN CONSTRUCTOR
 
-        // 1 - no nulo
+        
         if (valor == null) {
             throw new IllegalArgumentException("No se permite nulos");
         }
 
-        // 2 - Cumple el formato
+        //Cumple el formato
         if (!VALIDAR_FORMATO.matcher(valor).matches()) {
             throw new IllegalArgumentException(String.format("El formato no es el correcto. Debe ser %s",
                     valor, FORMATO));
         }
 
-        // 4- Dígito verificador
+        //Dígito verificador
         if (!validarDigitoVerificador(valor)) {
             throw new IllegalArgumentException("Dígito verificador de cuenta inválido");
         }
 
-        // 5- Banco valido
+        //Banco valido
         if (!esBancoValido(valor)) {
             throw new IllegalArgumentException("Código de banco no válido");
         }
 
 
-        // ✅ SI PASÓ TODAS LAS VALIDACIONES
+  
         this.valor = valor;
 
     }
 
     // METODOS DE LA CLASE
 
-    // 🏭 MÉTODO FÁBRICA PRINCIPAL
+    // MÉTODO FÁBRICA PRINCIPAL
     public static CuentaId newCuentaId(String valor) {
         return new CuentaId(valor);
     }
@@ -76,11 +76,11 @@ public final class CuentaId {
         return FORMATO;
     }
 
-    /**
-     * OBTENER NÚMERO DE CUENTA LEGIBLE
-     * Formato: Banco-Sucursal-Tipo-Número
-     * Ejemplo: "0290-1234-00-0000001234"
-     */
+    
+     //OBTENER NÚMERO DE CUENTA LEGIBLE
+     //Formato: Banco-Sucursal-Tipo-Número
+     //Ejemplo: "0290-1234-00-0000001234"
+     
     public String getNumeroLegible() {
         return String.format("%s-%s-%s-%s", getCodigoBanco(), getCodigoSucursal(),
                 getTipoDeCuenta(), valor.substring(12, 22)); // ultimos 10 digitos
@@ -90,12 +90,12 @@ public final class CuentaId {
 
     // METODOS COMPLEJOS
 
-    /*
-     * 📌 REGLA DE NEGOCIO: Deducir Moneda desde el tipo
-     * - Tipos 00-09 → Pesos Argentinos (ARS)
-     * - Tipos 10-19 → Dólares (USD)
-     * - Tipos 20-29 → Euros (EUR)
-     */
+    
+     //REGLA DE NEGOCIO: Deducir Moneda desde el tipo
+     //Tipos 00-09 → Pesos Argentinos (ARS)
+     //Tipos 10-19 → Dólares (USD)
+     //Tipos 20-29 → Euros (EUR)
+     
     public Moneda deducirMoneda() {
         int tipo = Integer.parseInt(getTipoDeCuenta());
 
@@ -110,35 +110,35 @@ public final class CuentaId {
         }
     }
 
-    // * VERIFICAR SI ES CUENTA EN PESOS
+
     public boolean esCuentaEnPesos() {
         return deducirMoneda() == Moneda.ARG;
     }
 
 
-    /**
-     * 🧮 CALCULAR DÍGITO VERIFICADOR
-     */
+    
+     //CALCULAR DÍGITO VERIFICADOR
+     
     private static String calcularDigitoVerificador(String valorSinDigito) {
 
         // Para pruebas, devolver "00" o un valor fijo
         return "00";
     }
 
-    // VALIDAR DÍGITO VERIFICADOR
+
     private static boolean validarDigitoVerificador(String valor) {
 
-        // ✅ PARA PRUEBAS: Aceptar siempre
+        //PARA PRUEBAS: Aceptar siempre
         // Más adelante implementaremos un algoritmo real
 
         System.out.println("✅ Dígito verificador aceptado (modo pruebas)");
         return true;
     }
 
-    /*
-     * 🏦 VALIDAR CÓDIGO DE BANCO
-     * En sistema real, verificaría contra base de bancos autorizados
-     */
+    
+     //VALIDAR CÓDIGO DE BANCO
+     //En sistema real, verificaría contra base de bancos autorizados
+     
     private static boolean esBancoValido(String valor) {
         String codigoBanco = valor.substring(3, 6);
         // Ejemplo: solo permitimos algunos bancos
@@ -161,7 +161,7 @@ public final class CuentaId {
         }
     }
 
-    // 🎲 GENERAR NÚMERO ALEATORIO DE CUENTA
+    //GENERAR NÚMERO ALEATORIO DE CUENTA
     private static String generarNumeroAleatorio() {
         long numero = (long) (Math.random() * 10_000_000_000L);
         return String.format("%011d", numero);
@@ -169,15 +169,15 @@ public final class CuentaId {
 
 
 
-    /**
-     *  MÉTODO FÁBRICA PARA CREAR NUEVAS CUENTAS
-     * Genera cuenta con formato válido para nuevo cliente
-     * 
-     * param codigoBanco    Código de 4 dígitos del banco
-     * param codigoSucursal Código de 4 dígitos de sucursal
-     * param moneda         Moneda de la cuenta (afecta el tipo de cuenta)
-     * return Nueva CuentaId válida
-     */
+    
+    //MÉTODO FÁBRICA PARA CREAR NUEVAS CUENTAS
+    //Genera cuenta con formato válido para nuevo cliente
+     
+    //param codigoBanco    Código de 4 dígitos del banco
+    //param codigoSucursal Código de 4 dígitos de sucursal
+    //param moneda         Moneda de la cuenta (afecta el tipo de cuenta)
+    //return Nueva CuentaId válida
+     
     public static CuentaId generarNueva(int codigoBanco, int codigoSucursal, Moneda moneda) {
         //  ESTRUCTURA: ARG + Banco(3) + Sucursal(4) + Tipo(2) + Numero(10) + DV(2)
         String bancoStr = String.format("%03d", codigoBanco);

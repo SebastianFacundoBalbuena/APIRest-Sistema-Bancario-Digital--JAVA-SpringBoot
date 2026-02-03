@@ -10,7 +10,7 @@ public class Dinero {
     private final BigDecimal monto;
     private final Moneda moneda;
 
-    // 🎯 CONFIGURACIÓN DE ESCALA PARA CÁLCULOS
+    //CONFIGURACIÓN DE ESCALA PARA CÁLCULOS
     private static final int ESCALA_CALCULO = 10;
     // METODO PARA REDONDEAR MONTOS - EJ: 1.50 -> 2.0
     private static final RoundingMode REDONDEO = RoundingMode.HALF_EVEN;
@@ -30,7 +30,7 @@ public class Dinero {
         if (monto.compareTo(BigDecimal.ZERO) < 0)
             throw new IllegalArgumentException("El monto no puede ser negativo" + monto);
 
-        // ✅ ASIGNACIÓN CON ESCALA CONSISTENTE
+        // ASIGNACIÓN CON ESCALA CONSISTENTE
         // al "monto" le agrega 10 decimales, si es necesario REDONDEA
         this.monto = monto.setScale(ESCALA_CALCULO, REDONDEO);
         this.moneda = moneda;
@@ -66,7 +66,7 @@ public class Dinero {
 
         Dinero other = (Dinero) obj;
 
-        // 🎯 Compara montos con escala de moneda y misma moneda
+        //Compara montos con escala de moneda y misma moneda
         return this.getMontoConEscalaMoneda().equals(other.getMontoConEscalaMoneda()) &&
                 this.moneda == other.moneda;
     }
@@ -80,7 +80,7 @@ public class Dinero {
 
 
 
-    // 🏭 MÉTODO FÁBRICA PRINCIPAL - Desde BigDecimal
+    //MÉTODO FÁBRICA PRINCIPAL - Desde BigDecimal
 
     public static Dinero nuevo(BigDecimal monto, Moneda moneda) {
         return new Dinero(monto, moneda);
@@ -88,14 +88,14 @@ public class Dinero {
 
     // Desde double (para comodidad)
     public static Dinero nuevoDouble(double monto, Moneda moneda) {
-        // 🎯 Conversión segura de double a BigDecimal con ValueOf
+        // Conversión segura de double a BigDecimal con ValueOf
         BigDecimal montoBigDecimal = BigDecimal.valueOf(monto);
         return new Dinero(montoBigDecimal, moneda);
     }
 
     // Desde String (para parsing seguro)
     public static Dinero nuevoString(String monto, Moneda moneda) {
-        // 🎯 Conversión segura de String a BigDecimal con ValueOf
+        //Conversión segura de String a BigDecimal con ValueOf
         BigDecimal montoBigDecimal = new BigDecimal(monto);
         return new Dinero(montoBigDecimal, moneda);
     }
@@ -250,7 +250,7 @@ public class Dinero {
 
 
         public Dinero convertirA(Moneda monedaDestino, TasaCambio tasa) {
-        // 🛡️ VALIDACIÓN EXPLÍCITA de dirección
+        //VALIDACIÓN EXPLÍCITA de dirección
         if (tasa.getMonedaOrigen() != this.moneda || tasa.getMonedaDestino() != monedaDestino) {
             throw new IllegalArgumentException(
                 "Tasa de cambio incorrecta. Se esperaba " + this.moneda + "→" + monedaDestino +

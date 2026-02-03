@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.*;
 
-public class DineroTest {
+class DineroTest {
     
 
     // TESTS DE CONSTRUCCIÓN Y VALIDACIÓN

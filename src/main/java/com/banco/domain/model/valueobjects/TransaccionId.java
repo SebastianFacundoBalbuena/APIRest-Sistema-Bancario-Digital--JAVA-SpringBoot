@@ -2,7 +2,7 @@ package com.banco.domain.model.valueobjects;
 
 import java.util.Objects;
 
-// 🆔 TRANSACCION_ID - Identificador único de transacción
+// TRANSACCION_ID - Identificador único de transacción
 //  Formato: TXN-2024-0000001 (TXN-AÑO-SECUENCIA)
 
 public class TransaccionId {
@@ -34,7 +34,7 @@ public class TransaccionId {
 
 
 
-    //📝 TIPO_TRANSACCION
+    //TIPO_TRANSACCION
     public enum TipoTransaccion{
         DEPOSITO,  //Ingreso de dinero
         RETIRO,    // Extracción de dinero 
@@ -45,7 +45,7 @@ public class TransaccionId {
         REVERSO //Reverso de una transacción anterior
     }
 
-    // ESTADO_TRANSACCION
+    //ESTADO_TRANSACCION
     public enum EstadoTransaccion{
         PENDIENTE,
         COMPLETADA,

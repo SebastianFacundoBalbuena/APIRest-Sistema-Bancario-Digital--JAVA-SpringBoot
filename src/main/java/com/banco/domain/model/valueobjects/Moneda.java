@@ -23,7 +23,7 @@ public enum Moneda {
         this.redondeoEfectivo = redondeoEfectivo;
     }
 
-        // 📖 MÉTODOS DE ACCESO (solo lecturas → inmutabilidad)
+    //MÉTODOS DE ACCESO (solo lecturas → inmutabilidad)
 
     public String getNombre() {
         return nombre;
@@ -47,20 +47,20 @@ public enum Moneda {
 
 
 
-    // 💡 MÉTODOS DE NEGOCIO (comportamiento rico)
+    //MÉTODOS DE NEGOCIO (comportamiento rico)
 
-    //     * Verifica si la moneda permite operaciones con decimales
+    //Verifica si la moneda permite operaciones con decimales
     public boolean permiteDecimales(){
         return decimales > 0;
     }
 
-    //🎯 REGLA DE NEGOCIO CRÍTICA: Compatibilidad entre monedas
+    // REGLA DE NEGOCIO CRÍTICA: Compatibilidad entre monedas
      // Solo permitimos operaciones entre la misma moneda
      public boolean esCompatibleCon(Moneda otraMoneda){
         return this == otraMoneda;
      }
 
-     //🎨 FORMATEO PARA TRANSACCIONES DIGITALES
+     //FORMATEO PARA TRANSACCIONES DIGITALES
      public String formatear(Double cantidad){
         if(permiteDecimales()){
             return String.format("%s %.2f %s", simbolo, cantidad, nombre);
@@ -71,32 +71,32 @@ public enum Moneda {
     }
 
 
-        //🆕 FORMATEO ESPECIAL PARA TRANSACCIONES FÍSICAS EN ARGENTINA
-        public String formatearParaEfectivo(double cantidad){
-            if(redondeoEfectivo){
-                // 🇦🇷 ARGENTINA: Redondea para billetes/monedas físicas
-                double redondeo = Math.round(cantidad);
+    //FORMATEO ESPECIAL PARA TRANSACCIONES FÍSICAS EN ARGENTINA
+    public String formatearParaEfectivo(double cantidad){
+        if(redondeoEfectivo){
+            // 🇦🇷 ARGENTINA: Redondea para billetes/monedas físicas
+            double redondeo = Math.round(cantidad);
                 return String.format("%s %.0f %s (efectivo)", simbolo, redondeo, nombre);
             }
             else{
-                 // 🇪🇺🇺🇸 EUROPA/EEUU: Siempre con decimales
+                // 🇪🇺🇺🇸 EUROPA/EEUU: Siempre con decimales
                 return formatear(cantidad);
                 
             }
-        }
+    }
         
-            //🧮 REDONDEO PARA OPERACIONES FÍSICAS
-            public double redondearEfectivo(double cantidad){
-                if(redondeoEfectivo){
-                    return Math.round(cantidad); // Argentina: redondea
-                }
-                else{
-                    return cantidad;  // Otros: mantiene decimales
-                }
-            }
+    //REDONDEO PARA OPERACIONES FÍSICAS
+    public double redondearEfectivo(double cantidad){
+        if(redondeoEfectivo){
+            return Math.round(cantidad); // Argentina: redondea
+        }
+        else{
+            return cantidad;  // Otros: mantiene decimales
+        }
+    }
 
 
-            public static Moneda fromCodigo(String codigo) {
+    public static Moneda fromCodigo(String codigo) {
         if (codigo == null || codigo.isBlank()) {
             throw new IllegalArgumentException("El código de moneda no puede estar vacío");
         }
@@ -104,12 +104,12 @@ public enum Moneda {
         String codigoUpper = codigo.trim().toUpperCase();
         
         return switch (codigoUpper) {
-            case "EUR" -> EUR;
-            case "USD" -> USD;
-            case "ARG", "ARS" -> ARG; // Permite ambos códigos
-            default -> throw new IllegalArgumentException(
-                "Código de moneda no válido: '" + codigo + 
-                "'. Valores permitidos: EUR, USD, ARG"
+        case "EUR" -> EUR;
+        case "USD" -> USD;
+        case "ARG", "ARS" -> ARG; // Permite ambos códigos
+        default -> throw new IllegalArgumentException(
+            "Código de moneda no válido: '" + codigo + 
+            "'. Valores permitidos: EUR, USD, ARG"
             );
         };
     }
@@ -119,22 +119,22 @@ public enum Moneda {
 
 
 
-            //✅ VALIDACIÓN DE MONTO VÁLIDO
-            public boolean esValido(double monto){
+    //VALIDACIÓN DE MONTO VÁLIDO
+    public boolean esValido(double monto){
 
-                if(monto < 0){
-                    return false; // no permitimos montos negativos
-                }
-                if(redondeoEfectivo){
-                     // En Argentina, para efectivo validamos que sea "redondeable"
-                     return true;
-                }
+        if(monto < 0){
+            return false; // no permitimos montos negativos
+        }
+        if(redondeoEfectivo){
+        // En Argentina, para efectivo validamos que sea "redondeable"
+                return true;
+        }
 
-                return true; // Para otras monedas, cualquier monto positivo es válido
-
-            }
+    return true; // Para otras monedas, cualquier monto positivo es válido
 
     }
+
+}
     
 
     
