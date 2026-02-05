@@ -131,7 +131,7 @@ public class Cuenta {
     // 🛡️ VALIDACIONES DE LA CUENTA
     public void validarPuedeOperar(){
         if(!activa) throw new IllegalStateException("La cuenta " + cuentaId + 
-        "esta inactiva y no puede operar");
+        " esta inactiva y no puede operar");
     }
 
     public void validarMonedaCompatible(Cuenta otraCuenta){
@@ -166,7 +166,7 @@ public class Cuenta {
     }
 
     public void validarPuedeCerrar() {
-    if (tieneSaldoCero() == true) {
+    if (tieneSaldoCero() == false) {
         throw new IllegalStateException(
             "No se puede cerrar cuenta con saldo: " + saldo
         );
