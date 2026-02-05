@@ -28,7 +28,7 @@ public class Dinero {
         // 2- verificamos que monto no sea negativo
         // Devuelve un numero entero y lo comparamos con 0
         if (monto.compareTo(BigDecimal.ZERO) < 0)
-            throw new IllegalArgumentException("El monto no puede ser negativo" + monto);
+            throw new IllegalArgumentException("El monto no puede ser negativo " + monto);
 
         // ASIGNACIÓN CON ESCALA CONSISTENTE
         // al "monto" le agrega 10 decimales, si es necesario REDONDEA

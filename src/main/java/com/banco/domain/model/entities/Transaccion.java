@@ -83,7 +83,7 @@ public class Transaccion {
     //OBTENER RESUMEN PARA REPORTES
     public String getResumen() {
         return String.format("%s - %s - %s - %s", 
-            tipoTransaccion, monto, estado, fechaDeCreacion.toLocalDate());
+            tipoTransaccion, monto.getMonto(), estado, fechaDeCreacion.toLocalDate());
     }
 
 
@@ -108,7 +108,7 @@ public class Transaccion {
             "%-12s %-15s %10s %-8s %s",
             fechaDeCreacion.toLocalDate(),
             tipoTransaccion,
-            monto,
+            monto.getMonto(),
             estado,
             descripcion
         );
