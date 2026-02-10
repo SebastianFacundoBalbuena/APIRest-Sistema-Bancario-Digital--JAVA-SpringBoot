@@ -343,7 +343,7 @@ public class TransaccionService {
             LocalDateTime.now(), 
             null, 
             null,
-             "Transferencia fallida " + mensajeError);
+             "Transferencia fallida. " + mensajeError);
     }
 
 
@@ -382,7 +382,7 @@ public class TransaccionService {
         CuentaId cuentaOrigen = CuentaId.newCuentaId(request.getCuentaOrigen());
         
         return cuentaRepository.buscarPorId(cuentaOrigen).orElseThrow(()-> new IllegalArgumentException(
-            "Cuenta de destino no encontrada: " + cuentaOrigen));
+            "Cuenta de origen no encontrada: " + cuentaOrigen));
     }
 
 
