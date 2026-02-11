@@ -14,7 +14,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import com.banco.application.dto.MovimientoDTO;
 import com.banco.application.dto.TransferenciaRequest;
 import com.banco.application.dto.TransferenciaResponse;
 import com.banco.application.port.out.CuentaRepository;
@@ -38,6 +40,8 @@ import com.banco.domain.model.valueobjects.ClienteId;
 import com.banco.domain.model.valueobjects.CuentaId;
 import com.banco.domain.model.valueobjects.Dinero;
 import com.banco.domain.model.valueobjects.Moneda;
+import com.banco.domain.model.valueobjects.TransaccionId;
+import com.banco.domain.model.valueobjects.TransaccionId.EstadoTransaccion;
 import com.banco.domain.model.valueobjects.TransaccionId.TipoTransaccion;
 
 
@@ -390,6 +394,279 @@ class TransaccionServiceTest {
             .hasMessageContaining("Error de deposito: El monto no puede ser negativo");
 
         }
+    }
+
+
+
+
+    @Nested
+    @DisplayName("Operaciones de retiro")
+    class OperacionesRetiroTest{
+
+
+
+
+        @Test
+        @DisplayName("Retirar de cuenta con fondos - deberia funcionar")
+        void retiroCuentaConFondos_debeFuncionar(){
+
+
+            Transaccion transaccion= transaccionService.retirar(
+                cuentaOrigenId.getValor(), 
+                new BigDecimal("500.00"), 
+                "ARG", 
+                "retiro test");
+
+
+            assertNotNull(transaccion);
+            assertThat(transaccion.getTipo()).isEqualTo(TipoTransaccion.RETIRO);
+            assertThat(transaccion.getDescripcion()).contains("retiro test");
+            assertThat(cuentaOrigen.getSaldo().getMontoConEscalaMoneda()).isEqualTo("500.00");
+
+            verify(cuentaRepository, times(1)).buscarPorId(cuentaOrigenId);
+            verify(cuentaRepository,times(1)).actualizar(cuentaOrigen);
+            verify(transaccionRepository, times(1)).guardar(transaccion);
+
+
+        }
+
+
+
+        @Test
+        @DisplayName("Retirar de cuenta sin fondos - debe fallar")
+        void retiroCuentaSinFondos_debeFallar(){
+
+
+            assertThatThrownBy(()-> transaccionService.retirar(
+                cuentaOrigenId.getValor(), 
+                new BigDecimal("1500.00"), 
+                "ARG", 
+                "retiro fallido"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Saldo insuficiente"); 
+
+
+            verify(cuentaRepository, times(1)).buscarPorId(cuentaOrigenId);
+
+
+
+        }
+
+
+
+
+        @Test
+        @DisplayName("Retirar de cuenta inactiva - debe fallar")
+        void retiroCuentaInactiva_debeFallar(){
+
+            Cuenta cuentaInactiva = new Cuenta(cuentaOrigenId, clienteId, Moneda.ARG, dinero, false);
+
+            when(cuentaRepository.buscarPorId(cuentaOrigenId)).thenReturn(Optional.of(cuentaInactiva));
+
+            assertThatThrownBy(()-> transaccionService.retirar(
+                cuentaOrigenId.getValor(), 
+                new BigDecimal("500.00"), 
+                "ARG", 
+                "retiro fallido"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("inactiva"); 
+
+
+            verify(cuentaRepository, times(1)).buscarPorId(cuentaOrigenId);
+
+
+
+        }
+
+
+    }
+
+
+
+
+    @Nested
+    @DisplayName("Operaciones de reversion")
+    class OperacionesReversionTest{
+
+
+
+
+        @Test
+        @DisplayName("Transaccion reversible - deberia revertir exitosamente")
+        void revertirTransaccion_DeberiaFuncionar(){
+
+
+
+            TransaccionId transaccionId = new TransaccionId("TXN-2024-0000001");
+            Transaccion transaccionOriginal = new Transaccion(
+                transaccionId, 
+                TipoTransaccion.TRANSFERENCIA, 
+                cuentaOrigenId, 
+                cuentaDestinoId, 
+                new Dinero(new BigDecimal("100.00"), Moneda.ARG), 
+                "transferencia a revertir");
+
+                transaccionOriginal.completar();
+
+                when(transaccionRepository.buscarPorId(any(TransaccionId.class))).thenReturn(Optional.of(transaccionOriginal));
+
+                Transaccion response = transaccionService.revertir(transaccionId.getValor());
+
+
+                assertNotNull(response);
+                assertThat(response.getEstado()).isEqualTo(EstadoTransaccion.COMPLETADA);
+                assertThat(response.getTipo()).isEqualTo(TipoTransaccion.REVERSO);
+
+
+                verify(transaccionRepository, times(1)).buscarPorId(any(TransaccionId.class));
+                verify(cuentaRepository, times(2)).buscarPorId(any(CuentaId.class));
+                verify(transaccionRepository, times(2)).guardar(any(Transaccion.class));
+
+        }
+
+
+
+
+
+        @Test
+        @DisplayName("Transaccion reversible no encontrada - deberia fallar")
+        void revertirTransaccionNoEncontrada_DeberiaFallar(){
+
+
+
+            TransaccionId transaccionId = new TransaccionId("TXN-2024-0000001");
+
+
+                when(transaccionRepository.buscarPorId(any(TransaccionId.class))).thenReturn(Optional.empty());
+
+                assertThatThrownBy(()-> transaccionService.revertir(transaccionId.getValor()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("no encontrada"); 
+
+
+                verify(transaccionRepository, times(1)).buscarPorId(any(TransaccionId.class));
+                verify(cuentaRepository, never()).buscarPorId(any(CuentaId.class));
+                verify(transaccionRepository, never()).guardar(any(Transaccion.class));
+
+        }
+
+
+
+        @Test
+        @DisplayName("Transaccion no reversible  - deberia fallar")
+        void revertirTransaccionNoReversible_DeberiaFallar(){
+
+
+
+            TransaccionId transaccionId = new TransaccionId("TXN-2024-0000001");
+            Transaccion transaccionNoReversible = new Transaccion(
+                transaccionId, 
+                TipoTransaccion.TRANSFERENCIA, 
+                cuentaOrigenId, 
+                cuentaDestinoId, 
+                new Dinero(new BigDecimal("100.00"), Moneda.ARG), 
+                "transferencia a revertir");
+
+
+                when(transaccionRepository.buscarPorId(any(TransaccionId.class))).thenReturn(Optional.of(transaccionNoReversible));
+
+                assertThatThrownBy(()-> transaccionService.revertir(transaccionId.getValor()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("no reversible"); 
+
+
+                verify(transaccionRepository, times(1)).buscarPorId(any(TransaccionId.class));
+                verify(cuentaRepository, never()).buscarPorId(any(CuentaId.class));
+                verify(transaccionRepository, never()).guardar(any(Transaccion.class));
+
+        }
+
+
+    }
+
+
+
+
+    @Nested
+    @DisplayName("Test de consulta")
+    class ConsultaTest{
+
+
+
+        
+        @Test
+        @DisplayName("Deberia consultar movimientos de cuenta existente")
+        void consultaDeMovimientoCuentas_DeriaSalirBien(){
+
+
+
+            Transaccion transaccion1 = new Transaccion(
+                new TransaccionId("TXN-2024-0000001"),
+                TipoTransaccion.DEPOSITO,
+                null,
+                cuentaOrigenId,
+                Dinero.nuevo(new BigDecimal("1000.00"), Moneda.ARG),
+                "Depósito inicial"
+            );
+            transaccion1.completar();
+
+            Transaccion transaccion2 = new Transaccion(
+                new TransaccionId("TXN-2024-0000002"),
+                TipoTransaccion.RETIRO,
+                cuentaOrigenId,
+                null,
+                Dinero.nuevo(new BigDecimal("200.00"), Moneda.ARG),
+                "Retiro cajero"
+            );
+            transaccion2.completar();
+
+             List<Transaccion> transacciones = Arrays.asList(transaccion1, transaccion2);
+
+             when(transaccionRepository.buscarCuentas(cuentaOrigenId)).thenReturn(transacciones);
+
+            List<MovimientoDTO> listTransaccion = transaccionService.consultarMovimiento(cuentaOrigenId.getValor());
+
+            
+
+            assertNotNull(listTransaccion);
+            assertEquals(2, listTransaccion.size());
+
+
+            verify(transaccionRepository, times(1)).buscarCuentas(cuentaOrigenId);
+
+        }
+
+
+        @Test
+        @DisplayName(" Debería lanzar excepción al consultar cuenta inválida")
+        void consultarMovimientos_CuentaInvalida_LanzaExcepcion() {
+            
+            assertThatThrownBy(()-> transaccionService.consultarMovimiento("cuenta-invalida"))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("Hubo un error al intentar consultar movimientos");
+            
+
+        }
+
+
+
+        @Test
+        @DisplayName("Debería devolver lista vacía cuando no hay movimientos")
+        void consultarMovimientos_CuentaSinMovimientos_ListaVacia() {
+
+            when(transaccionRepository.buscarCuentas(cuentaOrigenId))
+                .thenReturn(Arrays.asList());
+            
+            
+            List<MovimientoDTO> movimientos = transaccionService.consultarMovimiento(cuentaOrigenId.getValor());
+            
+   
+            assertNotNull(movimientos);
+            assertTrue(movimientos.isEmpty());
+        }
+
+
+
     }
 
 }

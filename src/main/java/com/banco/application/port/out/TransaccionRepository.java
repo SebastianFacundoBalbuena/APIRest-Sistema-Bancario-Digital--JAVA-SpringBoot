@@ -20,7 +20,7 @@ public interface TransaccionRepository {
     // BUSCAR POR CUENTA
     List<Transaccion> buscarPorCuenta(Cuenta cuenta, LocalDateTime desde, LocalDateTime hasta);
 
-    //BUSCAR CUENTAS POR NUMERO DE CUENTA
+    //BUSCAR TTANSACCION POR NUMERO DE CUENTA
     List<Transaccion> buscarCuentas(CuentaId cuentaId);
 
     //BUSCAR POR REFERENCIA
