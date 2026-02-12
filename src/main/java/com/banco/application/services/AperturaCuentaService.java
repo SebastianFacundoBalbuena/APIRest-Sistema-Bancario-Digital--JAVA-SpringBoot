@@ -318,8 +318,8 @@ public class AperturaCuentaService {
         );
         
         return new AperturaCuentaResponse(
-            cuenta.getCuentaId().toString(),
-            cliente.getClienteId().toString(),
+            cuenta.getCuentaId().getValor(),
+            cliente.getClienteId().getValor(),
             request.getTipoCuenta(),
             request.getMoneda(),
             request.getSaldoInicial(),
