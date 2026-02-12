@@ -283,7 +283,7 @@ public class TransaccionService {
     }
 
     
-    private Dinero crearMonto(TransferenciaRequest request) {
+    public Dinero crearMonto(TransferenciaRequest request) {
       try {
         // Convierte a mayúsculas por si acaso
         String codigoMoneda = request.getMoneda().toUpperCase();

@@ -669,4 +669,110 @@ class TransaccionServiceTest {
 
     }
 
+
+
+    @Nested
+    @DisplayName("METODOS AUXILIARES TEST")
+    class MetodosAuxiliaresTest{
+
+
+
+
+        @Test
+        @DisplayName("Deberia cargar cuenta origen correctamente")
+        void cargarCuentaOrigen_debeFuncionar(){
+
+
+           
+
+            Cuenta cuenta = transaccionService.cargarCuentaOrigen(transferenciaRequest);
+
+            assertNotNull(cuenta);
+            assertThat(cuenta.getActiva()).isTrue();
+            assertThat(cuenta.getCuentaId()).isEqualTo(cuentaOrigenId);
+
+
+
+
+        }
+
+
+
+        @Test
+        @DisplayName("Deberia cargar cuenta destino correctamente")
+        void cargarCuentaDestino_debeFuncionar(){
+
+
+            Cuenta cuenta2 = transaccionService.cargarCuentaDestino(transferenciaRequest);
+
+            assertNotNull(cuenta2);
+            assertThat(cuenta2.getCuentaId()).isEqualTo(cuentaDestinoId);
+
+
+
+        }
+
+
+
+        @Test
+        @DisplayName("Debería crear monto correctamente desde request")
+        void crearMonto_RequestValido_MontoCreado() {
+            
+            Dinero monto = transaccionService.crearMonto(transferenciaRequest);
+            
+            
+            assertNotNull(monto);
+            assertThat(monto.getMontoConEscalaMoneda()).isEqualTo(new BigDecimal("1000.00"));
+            assertThat(monto.getMoneda()).isEqualTo(Moneda.ARG);
+        }
+
+
+
+        @Test
+        @DisplayName("Debería fallar al crear monto con moneda inválida")
+        void crearMonto_MonedaInvalida_LanzaExcepcion() {
+            
+            TransferenciaRequest requestMonedaInvalida = new TransferenciaRequest(
+                cuentaOrigenId.getValor(),
+                cuentaDestinoId.getValor(),
+                new BigDecimal("1000.00"),
+                "MONEDA-INVALIDA", // Moneda no válida
+                "Test");
+
+            
+            assertThatThrownBy(()-> transaccionService.crearMonto(requestMonedaInvalida))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("no válida");
+
+        }
+
+
+
+        @Test
+        @DisplayName("Debería convertir transacción a DTO correctamente")
+        void convertirAMovimientoDto_TransaccionValida_DTOConvertido() {
+            
+            Transaccion transaccion = new Transaccion(
+                new TransaccionId("TXN-2024-0000001"),
+                TipoTransaccion.DEPOSITO,
+                null,
+                cuentaOrigenId,
+                Dinero.nuevo(new BigDecimal("1000.00"), Moneda.ARG),
+                "Test"
+            );
+            transaccion.completar();
+            
+            
+            MovimientoDTO dto = transaccionService.convertirAmovimientoDto(transaccion);
+            
+            
+            assertNotNull(dto);
+            assertThat(dto.getId()).isEqualTo("TXN-2024-0000001");
+            assertThat(dto.getTipo()).isEqualTo("DEPOSITO");
+            assertThat(dto.getMonto().setScale(2)).isEqualTo("1000.00");
+        }
+
+
+    }
+
 }
