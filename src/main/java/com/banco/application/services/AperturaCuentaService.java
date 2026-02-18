@@ -35,7 +35,7 @@ public class AperturaCuentaService {
     private final CuentaRepository cuentaRepository;
     private final TransaccionRepository transaccionRepository;
 
-    // 🎯 CONSTRUCTOR CON INYECCIÓN
+    // CONSTRUCTOR CON INYECCIÓN
     public AperturaCuentaService(ClienteRepository clienteRepository, CuentaRepository cuentaRepository,
             TransaccionRepository transaccionRepository) {
         this.clienteRepository = clienteRepository;
@@ -81,7 +81,7 @@ public class AperturaCuentaService {
 
         } catch (Exception e) {
             
-            System.err.println("❌ Error en apertura de cuenta: " + e.getMessage());
+            System.err.println(" Error en apertura de cuenta: " + e.getMessage());
             return crearRespuestaError(e.getMessage());
         }
     }
@@ -92,9 +92,7 @@ public class AperturaCuentaService {
         // CREAR CUENTA CON SALDO CERO
         Cuenta cuenta = new Cuenta(cuentaId, clienteId, moneda);
 
-        System.out.println("🏦 Cuenta creada: " + cuentaId + 
-        " - Tipo: " + tipoCuenta + 
-        " - Moneda: " + moneda);
+        System.out.println("Cuenta creada: " + cuentaId + " - Tipo: " + tipoCuenta + " - Moneda: " + moneda);
 
         return cuenta;
     }
@@ -129,7 +127,7 @@ public class AperturaCuentaService {
             transaccionApertura.completar();
             transaccionRepository.guardar(transaccionApertura);
 
-            System.out.println("💰 Saldo inicial depositado: " + saldoInicial);
+            System.out.println(" Saldo inicial depositado: " + saldoInicial);
 
 
     }
@@ -138,7 +136,7 @@ public class AperturaCuentaService {
 
         try {
             cliente.agregarCuenta(cuentaId);
-            System.out.println("✅ Cuenta asociada al cliente: " + cliente.getNombre());
+            System.out.println("Cuenta asociada al cliente: " + cliente.getNombre());
         } catch (Exception e) {
             throw new IllegalStateException("El cliente excede limite de cuentas");
         }
@@ -147,7 +145,7 @@ public class AperturaCuentaService {
     private void guardarCambios(Cliente cliente, Cuenta cuenta){
         clienteRepository.actualizar(cliente);
         cuentaRepository.guardar(cuenta);
-        System.out.println("💾 Cambios guardados exitosamente");
+        System.out.println("Cambios guardados exitosamente");
 
     }
 
@@ -185,7 +183,7 @@ public class AperturaCuentaService {
 
         cuentaRepository.actualizar(cuenta);
 
-        System.out.println("✅ Cuenta cerrada: " + cuentaId);
+        System.out.println("Cuenta cerrada: " + cuentaId);
 
         } catch (Exception e) {
             
@@ -208,7 +206,7 @@ public class AperturaCuentaService {
 
         cuentaRepository.actualizar(cuenta);
 
-        System.out.println("✅ Cuenta activada nuevamente: " + cuentaId);
+        System.out.println("Cuenta activada nuevamente: " + cuentaId);
 
         } catch (Exception e) {
             
@@ -238,7 +236,7 @@ public class AperturaCuentaService {
         if(request.getSaldoInicial() != null && request.getSaldoInicial().compareTo(BigDecimal.ZERO) < 0) throw new IllegalArgumentException(
             "El saldo inicial no puede ser menor a 0");
 
-            System.out.println("✅ Validaciones de request OK");
+            System.out.println("Validaciones de request OK");
     }
 
     private Cliente cargarYValidarCliente(AperturaCuentaRequest request){
@@ -250,7 +248,7 @@ public class AperturaCuentaService {
             //VALIDAR QUE ESTA ACTIVO
             if(!cliente.getActiva()) throw new IllegalStateException("El cliente esta inactivo y no puede abrir cuentas");
 
-            System.out.println("✅ Cliente validado: " + cliente.getNombre());
+            System.out.println("Cliente validado: " + cliente.getNombre());
             return cliente;
     }
 
@@ -276,7 +274,7 @@ public class AperturaCuentaService {
     }
 
     private CuentaId generarNumeroCuenta(String sucursal){
-        //🎯 FORMATO: PAÍS-BANCO-SUCURSAL-SECUENCIA-DÍGITO
+        //FORMATO: PAÍS-BANCO-SUCURSAL-SECUENCIA-DÍGITO
         // // Ejemplo: ARG-017-001-00012345-8
 
         String codigoPais = "ARG";
@@ -309,7 +307,7 @@ public class AperturaCuentaService {
         public AperturaCuentaResponse crearRespuestaExitosa(Cuenta cuenta, AperturaCuentaRequest request,Cliente cliente) {
         
         String mensaje = String.format(
-            "✅ Cuenta %s creada exitosamente para %s. %s",
+            "Cuenta %s creada exitosamente para %s. %s",
             cuenta.getCuentaId(),
             cliente.getNombre(),
             request.getSaldoInicial() != null && 
@@ -336,7 +334,7 @@ public class AperturaCuentaService {
             null,
             BigDecimal.ZERO,
             LocalDateTime.now(),
-            "❌ Error en apertura de cuenta: " + mensajeError
+            "Error en apertura de cuenta: " + mensajeError
         );
     }
     
