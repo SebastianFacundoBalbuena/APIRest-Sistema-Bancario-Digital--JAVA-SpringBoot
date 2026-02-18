@@ -111,7 +111,7 @@ public class GestionClienteService {
 
         Cliente cliente = validarClienteId(clienteIdStr);
         validarLimiteDeCuentas(cliente);
-        validarCuentaAgregada(clienteIdStr, cliente);
+        validarCuentaAgregada(cuentaStr, cliente);
 
         List<CuentaId> nuevaCuenta = new ArrayList<>(cliente.getCuentas());
         nuevaCuenta.add(cuentaId);
@@ -131,7 +131,7 @@ public class GestionClienteService {
         CuentaId cuentaId = CuentaId.newCuentaId(cuentaStr);
 
         Cliente cliente = validarClienteId(clienteIdStr);
-        validarCuentaAgregada(clienteIdStr, cliente);
+        validarCuentaExistente(cuentaStr, cliente);
 
         List<CuentaId> nuevaCuenta = new ArrayList<>(cliente.getCuentas());
         nuevaCuenta.remove(cuentaId);
@@ -198,10 +198,21 @@ public class GestionClienteService {
             "Limite de cuentas alcanzado. Maximo permitido: " + MAX_CUENTAS_PERMITIDAS);
     }
 
-    public void validarCuentaAgregada(String clienteId, Cliente cliente){
+    public void validarCuentaAgregada(String cuentaIdStr, Cliente cliente){
 
-        if(cliente.getCuentas().contains(clienteId)) throw new IllegalArgumentException(
+        CuentaId cuentaId = CuentaId.newCuentaId(cuentaIdStr);
+
+        if(cliente.getCuentas().contains(cuentaId)) throw new IllegalArgumentException(
             "La cuenta ya esta asignada a este cliente ");
+    }
+
+
+    public void validarCuentaExistente(String cuentaIdStr, Cliente cliente){
+
+        CuentaId cuentaId = CuentaId.newCuentaId(cuentaIdStr);
+
+        if(!cliente.getCuentas().contains(cuentaId)) throw new IllegalArgumentException(
+            "La cuenta no está asignada a este cliente ");
     }
 
         
