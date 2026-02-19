@@ -366,6 +366,118 @@ public class GestionClienteServiceTest {
 
             verify(clienteRepository, never()).actualizar(any(Cliente.class));
         }
+
+
+    }
+
+
+
+    @Nested
+    @DisplayName("Conversión a Response")
+    class ConversionResponseTest {
+
+        @Test
+        @DisplayName("Debería convertir Cliente a ClienteResponse correctamente")
+        void convertirResponse_ClienteCompleto_ResponseCompleta() {
+            
+            Cliente clienteCompleto = new Cliente(
+                clienteId, "Juan Pérez", "juan@email.com", true, cuentasCliente
+            );
+
+            
+            ClienteResponse response = gestionClienteService.convertirResponse(clienteCompleto);
+
+            
+            assertNotNull(response);
+            assertThat(response.getClienteId()).isEqualTo(clienteId.getValor());
+            assertThat(response.getNombre()).isEqualTo("Juan Pérez");
+            assertThat(response.getEmail()).isEqualTo("juan@email.com");
+            assertThat(response.isActivo()).isTrue();
+            assertThat(response.getCantidadCuentas()).isEqualTo(2);
+            assertThat(response.getMaxCuentasPermitidas()).isEqualTo(5);
+            assertThat(response.getCuentaIds()).hasSize(2);
+            assertThat(response.getCuentaIds()).contains(cuentaId1.getValor(), cuentaId2.getValor());
+            assertNotNull(response.getFechaCreacion());
+            assertNotNull(response.getFechaUltimaActualizacion());
+        }
+
+
+
+        @Test
+        @DisplayName("Debería convertir Cliente sin cuentas correctamente")
+        void convertirResponse_ClienteSinCuentas_ResponseSinCuentas() {
+            
+            Cliente clienteSinCuentas = new Cliente(clienteId, "Juan Pérez", "juan@email.com");
+
+            
+            ClienteResponse response = gestionClienteService.convertirResponse(clienteSinCuentas);
+
+            
+            assertNotNull(response);
+            assertThat(response.getCantidadCuentas()).isZero();
+            assertThat(response.getCuentaIds()).isEmpty();
+        }
+
+
+    }
+
+
+
+
+    @Nested
+    @DisplayName("Validaciones Internas")
+    class ValidacionesInternasTest {
+
+
+
+        @Test
+        @DisplayName("Debería validar email correctamente")
+        void validarEmail_EmailValido_NoLanzaExcepcion() {
+            
+            when(clienteRepository.existePorEmail("nuevo@email.com")).thenReturn(false);
+
+            ClienteRequest request = new ClienteRequest("Test", "nuevo@email.com");
+
+            
+            assertDoesNotThrow(() -> gestionClienteService.crearCliente(request));
+        }
+
+        @Test
+        @DisplayName("Debería validar límite de cuentas correctamente")
+        void validarLimiteDeCuentas_ClienteCon4Cuentas_NoLanzaExcepcion() {
+            // Cliente con 4 cuentas
+            CuentaId c1 = CuentaId.newCuentaId("ARG0170001000000012345000");
+            CuentaId c2 = CuentaId.newCuentaId("ARG0170001000000012345010");
+            CuentaId c3 = CuentaId.newCuentaId("ARG0170001000000012345020");
+            CuentaId c4 = CuentaId.newCuentaId("ARG0170001000000012345030");
+            
+            Cliente clienteCon4 = new Cliente(
+                clienteId, "Juan Pérez", "juan@email.com", true, 
+                List.of(c1, c2, c3, c4)
+            );
+            
+            CuentaId nuevaCuenta = CuentaId.newCuentaId("ARG0170001000000012345040");
+            
+            when(clienteRepository.buscarPorId(clienteId.getValor())).thenReturn(clienteCon4);
+
+            
+            assertDoesNotThrow(() -> gestionClienteService.agregarCuentaAcliente(
+                clienteId.getValor(), nuevaCuenta.getValor()
+            ));
+        }
+
+
+        @Test
+        @DisplayName("Debería validar que cuenta no esté ya agregada")
+        void validarCuentaAgregada_CuentaYaAgregada_LanzaExcepcion() {
+
+            when(clienteRepository.buscarPorId(clienteId.getValor())).thenReturn(clienteConDosCuentas);
+
+            assertThatThrownBy(() -> gestionClienteService.validarCuentaAgregada(
+            cuentaId1.getValor(), clienteConDosCuentas))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("La cuenta ya esta asignada");
+        }
     }
 
 
