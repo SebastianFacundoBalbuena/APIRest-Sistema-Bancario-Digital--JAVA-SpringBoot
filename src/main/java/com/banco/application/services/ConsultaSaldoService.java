@@ -24,7 +24,7 @@ import com.banco.domain.model.valueobjects.TransaccionId.TipoTransaccion;
 @Transactional(readOnly = true)  // Solo lectura 
 public class ConsultaSaldoService {
 
-    // DEPENDENCIAS
+    
     private final CuentaRepository cuentaRepository;
     private final TransaccionRepository transaccionRepository;
 
@@ -43,7 +43,7 @@ public class ConsultaSaldoService {
 
     // METODO PRINCIPAL
     public ConsultaSaldoResponse consultarSaldo(ConsultaSaldoRequest request) {
-        System.out.println("🔍 Consultando saldo para cuenta: " + request.getCuentaId());
+
         
         try {
             // 1️ VALIDACIONES BÁSICAS
@@ -60,20 +60,22 @@ public class ConsultaSaldoService {
                 procesarMovimientos(cuenta, request, response);
             }
             
-            // 5️⃣ 🛡️ AGREGAR INFORMACIÓN DE ESTADO
+            // 5️ AGREGAR INFORMACIÓN DE ESTADO
             agregarInformacionEstado(cuenta, response);
             
-            // 6️⃣ 🎯 CALCULAR SALDO DISPONIBLE
+            // 6️CALCULAR SALDO DISPONIBLE
             calcularSaldosDisponibles(cuenta, response);
             
-            // 7️⃣ 📝 MENSAJE FINAL
+            // 7️ MENSAJE FINAL
             completarMensaje(response);
             
-            System.out.println("✅ Consulta completada para cuenta: " + request.getCuentaId());
+            System.out.println("Consulta completada para cuenta: " + request.getCuentaId());
             return response;
             
         } catch (Exception e) {
-            System.err.println("❌ Error en consulta de saldo: " + e.getMessage());
+
+            System.err.println("Error en consulta de saldo: " + e.getMessage());
+
             return crearRespuestaError(request != null ? request.getCuentaId() : "DESCONOCIDA", e.getMessage());
         }
     }
@@ -98,11 +100,11 @@ public class ConsultaSaldoService {
     private ConsultaSaldoResponse construirRespuestaBase(Cuenta cuenta, ConsultaSaldoRequest request){
 
         ConsultaSaldoResponse response = new ConsultaSaldoResponse(
-            cuenta.getCuentaId().toString(),
-            cuenta.getClienteId().toString(),
-            "CORRIENTE",  //  Por ahora hardcodeado, luego vendrá de la entidad Cuenta
-            cuenta.getMoneda().toString(),
-            cuenta.getSaldo().getMonto(),
+            cuenta.getCuentaId().getValor(),
+            cuenta.getClienteId().getValor(),
+            "CORRIENTE",  
+            cuenta.getMoneda().name(),
+            cuenta.getSaldo().getMontoConEscalaMoneda(),
             "Consulta de saldo realizada exitosamente"
         );
         
@@ -149,7 +151,7 @@ public class ConsultaSaldoService {
     }
 
     private String determinarCuentaContraparte(Transaccion transaccion) {
-        // 🎯 SIMPLIFICACIÓN: En una implementación real, necesitaríamos
+        //  SIMPLIFICACIÓN: En una implementación real, necesitaríamos
         // más lógica para determinar qué cuenta mostrar como contraparte
         switch (transaccion.getTipo()) {
             case TRANSFERENCIA:
@@ -165,7 +167,7 @@ public class ConsultaSaldoService {
 
     // AJUSTAR SALDO PARA TRANSACCIÓN ANTERIOR (simulación)
     private BigDecimal ajustarSaldoParaTransaccionAnterior(BigDecimal saldoActual, Transaccion transaccion) {
-        // 💡 Esta es una simplificación. En producción, necesitaríamos
+        // Esta es una simplificación. En producción, necesitaríamos
         // llevar un registro del saldo después de cada transacción
         BigDecimal monto = transaccion.getMonto().getMonto();
         
@@ -184,7 +186,7 @@ public class ConsultaSaldoService {
         String cuentaContraparte = determinarCuentaContraparte(transaccion);
         
         return new MovimientoDTO(
-            transaccion.getId().toString(),
+            transaccion.getId().getValor(),
             transaccion.getTipo().toString(),
             transaccion.getFechaCreacion(),
             transaccion.getMonto().getMonto(),
@@ -221,29 +223,29 @@ public class ConsultaSaldoService {
         LocalDateTime fechaDesde = prepararFechaDesde(request);
         LocalDateTime fechaHasta = prepararFechaHasta(request);
         
-        // 2️⃣ 📊 OBTENER TRANSACCIONES DEL REPOSITORIO
+        // 2️OBTENER TRANSACCIONES DEL REPOSITORIO
         List<Transaccion> transacciones = transaccionRepository.buscarPorCuenta(
             cuenta, 
             fechaDesde, 
             fechaHasta
         );
         
-        // 3️⃣ 🎯 LIMITAR Y ORDENAR
+        // 3️ LIMITAR Y ORDENAR
         List<Transaccion> transaccionesLimitadas = transacciones.stream()
             .sorted(Comparator.comparing(Transaccion::getFechaCreacion).reversed()) //  Más recientes primero
             .limit(request.getLimiteMovimientos())
             .collect(Collectors.toList());
         
-        // 4️⃣ 📈 CALCULAR TOTALES DEL PERIODO
+        // 4️CALCULAR TOTALES DEL PERIODO
         calcularTotalesPeriodo(transacciones, response);
         
-        // 5️⃣ 📋 CONVERTIR A DTOs
+        // 5️CONVERTIR A DTOs
         convertirATransaccionesDTO(transaccionesLimitadas, cuenta, response);
         
-        // 6️⃣ ⏩ INDICAR SI HAY MÁS MOVIMIENTOS
+        // 6️INDICAR SI HAY MÁS MOVIMIENTOS
         response.setTieneMasMovimientos(transacciones.size() > request.getLimiteMovimientos());
         
-        System.out.println("📊 " + transaccionesLimitadas.size() + " movimientos procesados");
+        System.out.println( transaccionesLimitadas.size() + " movimientos procesados");
     }
 
     private void agregarInformacionEstado(Cuenta cuenta, ConsultaSaldoResponse response) {
@@ -303,7 +305,7 @@ public class ConsultaSaldoService {
             null,
             null,
             BigDecimal.ZERO,
-            "❌ Error en consulta: " + error
+            "Error en consulta: " + error
         );
         response.setEstadoCuenta("ERROR");
         response.agregarRestriccion("Consulta fallida - " + error);
@@ -319,27 +321,25 @@ public class ConsultaSaldoService {
 
     private void validarRequest(ConsultaSaldoRequest request) {
         if (request == null) {
-            throw new IllegalArgumentException(" La solicitud no puede ser nula");
+            throw new IllegalArgumentException("La solicitud no puede ser nula");
         }
         
         if (request.getCuentaId() == null || request.getCuentaId().trim().isEmpty()) {
             throw new IllegalArgumentException(" Se requiere ID de cuenta");
         }
         
-        // 🛡️ VALIDAR LÍMITES
+        // VALIDAR LÍMITES
         if (request.getLimiteMovimientos() > MOVIMIENTOS_MAXIMO) {
-            throw new IllegalArgumentException(
-                "❌ Límite de movimientos excedido. Máximo: " + MOVIMIENTOS_MAXIMO
-            );
+            throw new IllegalArgumentException("Límite de movimientos excedido. Máximo: " + MOVIMIENTOS_MAXIMO);
         }
         
-        // 📅 VALIDAR RANGO DE FECHAS
+        // VALIDAR RANGO DE FECHAS
         if (request.getFechaDesde() != null && request.getFechaHasta() != null) {
             if (request.getFechaDesde().isAfter(request.getFechaHasta())) {
                 throw new IllegalArgumentException("Fecha desde debe ser anterior a fecha hasta");
             }
             
-            // 🚫 LIMITAR CONSULTAS A MÁXIMO 1 AÑO
+            //  LIMITAR CONSULTAS A MÁXIMO 1 AÑO
             LocalDate maxFecha = request.getFechaDesde().plusYears(1);
             if (request.getFechaHasta().isAfter(maxFecha)) {
                 throw new IllegalArgumentException(" El rango máximo de consulta es 1 año");

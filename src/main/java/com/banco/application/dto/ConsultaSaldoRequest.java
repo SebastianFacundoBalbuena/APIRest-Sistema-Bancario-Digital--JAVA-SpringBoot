@@ -42,7 +42,7 @@ public class ConsultaSaldoRequest {
     public void setIncluirMovimientos(boolean incluirMovimientos) { this.incluirMovimientos = incluirMovimientos; }
 
     public int getLimiteMovimientos() { return limiteMovimientos; }
-    public void setLimiteMovimientos(int limiteMovimientos) {this.limiteMovimientos = Math.min(limiteMovimientos, 100);  } // Límite máximo
+    public void setLimiteMovimientos(int limiteMovimientos) {this.limiteMovimientos = limiteMovimientos ;  } 
 
 
     
