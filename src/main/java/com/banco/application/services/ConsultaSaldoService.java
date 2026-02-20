@@ -143,6 +143,8 @@ public class ConsultaSaldoService {
                 totalIngresos = totalIngresos.add(monto);
             } else if (transaccion.getTipo() == TipoTransaccion.RETIRO) {
                 totalEgresos = totalEgresos.add(monto);
+            } else if (transaccion.getTipo() == TipoTransaccion.TRANSFERENCIA){
+                totalEgresos = totalEgresos.add(monto);
             }
         }
         
