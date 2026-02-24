@@ -44,7 +44,7 @@ public class ClienteMapper {
             }
         }
 
-        System.out.println("✅ Cliente reconstruido desde BD: " + clienteId);
+        System.out.println("Cliente reconstruido desde BD: " + clienteId);
         return cliente;
 
 

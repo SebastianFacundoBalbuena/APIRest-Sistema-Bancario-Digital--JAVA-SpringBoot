@@ -79,12 +79,17 @@ public class TransaccionMapper {
         transaccionExistente.setReferencia(dominio.getReferencia());
         transaccionExistente.setEstado(dominio.getEstado());
         
-        if(transaccionExistente.getCuentaOrigenId() == null){
-            transaccionExistente.setCuentaOrigenId(dominio.getCuentaOrigen().getValor());
-        }
-        if(transaccionExistente.getCuentaDestinoId() == null){
-            transaccionExistente.setCuentaDestinoId(dominio.getCuentaDestino().getValor());
-        }
+    if(dominio.getCuentaOrigen() != null) {
+        transaccionExistente.setCuentaOrigenId(dominio.getCuentaOrigen().getValor());
+    } else {
+        transaccionExistente.setCuentaOrigenId(null); // explícito
+    }
+
+    if(dominio.getCuentaDestino() != null) {
+        transaccionExistente.setCuentaDestinoId(dominio.getCuentaDestino().getValor());
+    } else {
+        transaccionExistente.setCuentaDestinoId(null);
+    }
         
         return transaccionExistente;
         
