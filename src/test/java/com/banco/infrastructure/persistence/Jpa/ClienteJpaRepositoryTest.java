@@ -102,6 +102,7 @@ public class ClienteJpaRepositoryTest {
         void save_ClienteIdDuplicado_LanzaExcepcion() {
             
             clienteJpaRepository.save(clienteEntity);
+            clienteJpaRepository.flush();
             
             ClienteEntity duplicado = new ClienteEntity(
                 "CLI-12345678",  // Mismo clienteId
@@ -110,7 +111,9 @@ public class ClienteJpaRepositoryTest {
             );
 
            
-            assertThatThrownBy(() -> clienteJpaRepository.save(duplicado))
+            assertThatThrownBy(() -> {
+                clienteJpaRepository.save(duplicado);
+                clienteJpaRepository.flush();})
                 .isInstanceOf(DataIntegrityViolationException.class);
         }
 
