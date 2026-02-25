@@ -31,7 +31,7 @@ import java.time.LocalDateTime;
 public class TransaccionRepositoryJpa implements TransaccionRepository {
     
     // INTERFAZ CONTRATO
-    interface TransaccionJpaRepository extends JpaRepository<TransaccionEntity, UUID> {
+    public interface TransaccionJpaRepository extends JpaRepository<TransaccionEntity, UUID> {
     
         Optional<TransaccionEntity> findByTransaccionId(String transaccionId);
 

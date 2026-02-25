@@ -27,7 +27,7 @@ import java.util.List;
 public class CuentaRepositoryJpa implements CuentaRepository {
     
     // INTERNFAZ para adquirir metodo CRUD JPA
-     interface CuentaJpaRepository extends JpaRepository<CuentaEntity, UUID> {
+     public interface CuentaJpaRepository extends JpaRepository<CuentaEntity, UUID> {
     
         // Esta interfaz hereda de JPA, por lo cual podemos usar sus palabras clave
         // COMO existsBy - findBy etc + nombre del atributo
