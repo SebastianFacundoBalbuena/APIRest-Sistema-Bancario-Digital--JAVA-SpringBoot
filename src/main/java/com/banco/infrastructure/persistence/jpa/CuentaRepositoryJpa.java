@@ -1,16 +1,17 @@
 package com.banco.infrastructure.persistence.jpa;
 
 import java.util.Optional;
-import java.util.UUID;
+
 import java.util.stream.Collectors;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+
 import org.springframework.stereotype.Repository;
 import com.banco.application.port.out.CuentaRepository;
 import com.banco.domain.model.entities.Cuenta;
 import com.banco.domain.model.valueobjects.ClienteId;
 import com.banco.domain.model.valueobjects.CuentaId;
 import com.banco.infrastructure.persistence.entities.CuentaEntity;
+import com.banco.infrastructure.persistence.jpa.Interface.CuentaJpaRepository;
 import com.banco.infrastructure.persistence.mappers.CuentaMapper;
 
 import jakarta.transaction.Transactional;
@@ -26,19 +27,7 @@ import java.util.List;
 @Transactional
 public class CuentaRepositoryJpa implements CuentaRepository {
     
-    // INTERNFAZ para adquirir metodo CRUD JPA
-     public interface CuentaJpaRepository extends JpaRepository<CuentaEntity, UUID> {
-    
-        // Esta interfaz hereda de JPA, por lo cual podemos usar sus palabras clave
-        // COMO existsBy - findBy etc + nombre del atributo
-        // JPA ya conoce estas palabras y las detecta automaticamente sabiendo que queremos
-        Optional<CuentaEntity> findByNumeroCuenta(String numeroCuenta);
 
-
-        boolean existsByNumeroCuenta(String numeroCuenta);
-
-        List<CuentaEntity> findByClienteId(String clienteId);
-    }
 
     
     // INYECCION DE DEPENDENCIA

@@ -1,10 +1,10 @@
 package com.banco.infrastructure.persistence.jpa;
 
 import java.util.Optional;
-import java.util.UUID;
+
 import java.util.stream.Collectors;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+
 import org.springframework.stereotype.Repository;
 
 import com.banco.application.port.out.TransaccionRepository;
@@ -14,6 +14,7 @@ import com.banco.domain.model.valueobjects.CuentaId;
 import com.banco.domain.model.valueobjects.TransaccionId;
 
 import com.banco.infrastructure.persistence.entities.TransaccionEntity;
+import com.banco.infrastructure.persistence.jpa.Interface.TransaccionJpaRepository;
 import com.banco.infrastructure.persistence.mappers.TransaccionMapper;
 
 import jakarta.transaction.Transactional;
@@ -30,24 +31,7 @@ import java.time.LocalDateTime;
 @Transactional
 public class TransaccionRepositoryJpa implements TransaccionRepository {
     
-    // INTERFAZ CONTRATO
-    public interface TransaccionJpaRepository extends JpaRepository<TransaccionEntity, UUID> {
-    
-        Optional<TransaccionEntity> findByTransaccionId(String transaccionId);
 
-        //Busca transacciones donde la cuenta sea origen O destino
-        List<TransaccionEntity> findByCuentaOrigenIdOrCuentaDestinoId(String cuentaOrigen, String cuentaDestino);
-
-        List<TransaccionEntity> findByCuentaOrigenId(String numeroCuenta);
-        
-        List<TransaccionEntity> findByReferenciaContainingIgnoreCase(String referencia);
-
-        List<TransaccionEntity> findByCuentaOrigenIdOrCuentaDestinoIdAndFechaDeCreacionBetween(
-            String cuentaOrigenId, String cuentaDestinoId,
-            LocalDateTime desde, LocalDateTime hasta);
-
-            
-    }
 
     private final TransaccionJpaRepository transaccionJpaRepository;
     private final TransaccionMapper transaccionMapper;
@@ -90,7 +74,7 @@ public class TransaccionRepositoryJpa implements TransaccionRepository {
         // Buscar donde la cuenta es origen O destino, dentro del rango de fechas
         List<TransaccionEntity> entities = transaccionJpaRepository
                 .findByCuentaOrigenIdOrCuentaDestinoIdAndFechaDeCreacionBetween(
-                    cuentaIdString, cuentaIdString, desde, hasta);
+                    cuentaIdString, desde, hasta);
         
         return entities.stream()
                 .map(transaccionMapper::aDominio)
