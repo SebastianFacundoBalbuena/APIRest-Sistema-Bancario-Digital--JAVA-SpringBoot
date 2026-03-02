@@ -18,6 +18,8 @@ import com.banco.infrastructure.persistence.jpa.Interface.TransaccionJpaReposito
 import com.banco.infrastructure.persistence.mappers.TransaccionMapper;
 
 import jakarta.transaction.Transactional;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.time.LocalDateTime;
@@ -46,6 +48,11 @@ public class TransaccionRepositoryJpa implements TransaccionRepository {
     @Override
     public Optional<Transaccion> buscarPorId(TransaccionId transaccionId){
 
+        if (transaccionId == null) {
+        System.out.println(" Error: transaccionId es null");
+        return Optional.empty();
+    }
+
         String idTran = transaccionId.getValor();
 
         return transaccionJpaRepository.findByTransaccionId(idTran)
@@ -67,13 +74,20 @@ public class TransaccionRepositoryJpa implements TransaccionRepository {
 
     @Override
     public List<Transaccion> buscarPorCuenta(Cuenta cuenta, LocalDateTime desde, LocalDateTime hasta) {
+
+
+        if (cuenta == null || cuenta.getCuentaId() == null || desde == null || hasta == null) {
+        System.out.println(" Error: cuenta es null");
+        return Collections.emptyList();
+    }
+
         String cuentaIdString = cuenta.getCuentaId().getValor();
         System.out.println(" Buscando transacciones de cuenta " + cuentaIdString + 
-                         " entre " + desde + " y " + hasta);
+         " entre " + desde + " y " + hasta);
         
         // Buscar donde la cuenta es origen O destino, dentro del rango de fechas
         List<TransaccionEntity> entities = transaccionJpaRepository
-                .findByCuentaOrigenIdOrCuentaDestinoIdAndFechaDeCreacionBetween(
+                .buscarPorCuentaYFechas(
                     cuentaIdString, desde, hasta);
         
         return entities.stream()
@@ -83,6 +97,11 @@ public class TransaccionRepositoryJpa implements TransaccionRepository {
 
     @Override
     public List<Transaccion> buscarCuentas(CuentaId cuentaId){
+
+        if (cuentaId == null) {
+        System.out.println(" Error: transaccionId es null");
+        return Collections.emptyList();
+       }
 
         System.out.println("CuentaId recibido: " + cuentaId);
         System.out.println("Valor del CuentaId: " + cuentaId.getValor());

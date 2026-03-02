@@ -1,4 +1,4 @@
-package com.banco.infrastructure.persistence.Jpa;
+package com.banco.infrastructure.persistence.Jpa.Interface;
 
 import java.util.ArrayList;
 import java.util.Arrays;

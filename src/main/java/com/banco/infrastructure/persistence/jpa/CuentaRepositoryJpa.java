@@ -15,7 +15,10 @@ import com.banco.infrastructure.persistence.jpa.Interface.CuentaJpaRepository;
 import com.banco.infrastructure.persistence.mappers.CuentaMapper;
 
 import jakarta.transaction.Transactional;
+
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 
 
@@ -44,6 +47,12 @@ public class CuentaRepositoryJpa implements CuentaRepository {
 
     @Override
     public Optional<Cuenta> buscarPorId(CuentaId cuentaId){
+
+        if (cuentaId == null) {
+        System.out.println("CuentaId recibido: null");
+        return Optional.empty();
+        }
+
 
         System.out.println("CuentaId recibido: " + cuentaId);
         System.out.println("Valor del CuentaId: " + cuentaId.getValor());
@@ -89,9 +98,15 @@ public class CuentaRepositoryJpa implements CuentaRepository {
     @Override
     public List<Cuenta> buscarPorCliente(ClienteId clienteId){
 
+        if (clienteId == null) {
+        return Collections.emptyList();  // ← Evitar NullPointer
+        }
+
         List<CuentaEntity> cuentasEntity = cuentaJpaRepository.findByClienteId(clienteId.getValor());
 
-        return cuentasEntity.stream().map(entity -> cuentaMapper.aDominio(entity))
+        return cuentasEntity.stream()
+        .map(entity -> cuentaMapper.aDominio(entity))
+        .filter(Objects::nonNull)  // elimina los objetos null
         .collect(Collectors.toList());
     }
 

@@ -1,4 +1,4 @@
-package com.banco.infrastructure.persistence.Jpa;
+package com.banco.infrastructure.persistence.Jpa.Interface;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -319,7 +319,7 @@ public class TransaccionJpaRepositoryTest {
 
             
             List<TransaccionEntity> encontradas = transaccionJpaRepository
-                .findByCuentaOrigenIdOrCuentaDestinoIdAndFechaDeCreacionBetween(
+                .buscarPorCuentaYFechas(
                     cuentaId,  fechaAnterior, fechaPosterior);
 
             
@@ -344,7 +344,7 @@ public class TransaccionJpaRepositoryTest {
 
             
             List<TransaccionEntity> encontradas = transaccionJpaRepository
-                .findByCuentaOrigenIdOrCuentaDestinoIdAndFechaDeCreacionBetween(
+                .buscarPorCuentaYFechas(
                     cuentaId,  desde, hasta);
 
            
@@ -365,7 +365,7 @@ public class TransaccionJpaRepositoryTest {
 
            
             List<TransaccionEntity> encontradas = transaccionJpaRepository
-                .findByCuentaOrigenIdOrCuentaDestinoIdAndFechaDeCreacionBetween(
+                .buscarPorCuentaYFechas(
                     cuentaId,  desde, hasta);
 
          
@@ -384,7 +384,7 @@ public class TransaccionJpaRepositoryTest {
 
             
             List<TransaccionEntity> encontradas = transaccionJpaRepository
-                .findByCuentaOrigenIdOrCuentaDestinoIdAndFechaDeCreacionBetween(
+                .buscarPorCuentaYFechas(
                     cuentaId,  desde, hasta);
 
            
@@ -458,7 +458,7 @@ public class TransaccionJpaRepositoryTest {
 
 
         @Nested
-    @DisplayName("📝 Actualizar Transacción")
+    @DisplayName(" Actualizar Transacción")
     class ActualizarTransaccionTest {
 
         @Test
@@ -597,7 +597,7 @@ public class TransaccionJpaRepositoryTest {
 
             
             List<TransaccionEntity> encontradas = transaccionJpaRepository
-                .findByCuentaOrigenIdOrCuentaDestinoIdAndFechaDeCreacionBetween(
+                .buscarPorCuentaYFechas(
                     cuentaId,  null, null);
 
            

@@ -1,4 +1,4 @@
-package com.banco.infrastructure.persistence.Jpa;
+package com.banco.infrastructure.persistence.Jpa.Interface;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
