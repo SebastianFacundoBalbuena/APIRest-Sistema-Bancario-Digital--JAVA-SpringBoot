@@ -168,12 +168,25 @@ public class GestionClienteService {
 
     public void validarEmail(String email){
 
+        if (email == null) {
+        throw new IllegalArgumentException("El email no puede ser nulo");
+        }
+
+        if (!email.contains("@") || 
+        !email.contains(".") || 
+        email.indexOf("@") > email.lastIndexOf(".")) {  
+        
+        throw new IllegalArgumentException("Formato de email inválido: " + email);
+        }
+
         if(clienteRepository.existePorEmail(email)){
             throw new IllegalArgumentException("El Email: " + email + " ya esta registrado");
         }
     }
 
     public Cliente validarClienteId(String cliente){
+
+
 
         ClienteId clienteId = ClienteId.newCliente(cliente);
 
@@ -187,7 +200,7 @@ public class GestionClienteService {
         else{
 
             throw new IllegalArgumentException(
-                "Cliente no encontrado: " + clienteId);
+            "Cliente no encontrado: " + clienteId);
         }
 
     }

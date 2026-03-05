@@ -46,7 +46,7 @@ public class ClienteController {
         
        ClienteResponse cliente = gestionClienteService.crearCliente(entity);
 
-       // 🎯 Construimos respuesta HTTP completa
+       // Construimos respuesta HTTP completa
        return ResponseEntity
        .status(HttpStatus.CREATED)
        .header("Location", "api/cliente " + cliente.getClienteId())
