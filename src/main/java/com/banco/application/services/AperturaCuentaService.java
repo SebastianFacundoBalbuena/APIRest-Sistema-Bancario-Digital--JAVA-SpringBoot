@@ -82,6 +82,7 @@ public class AperturaCuentaService {
         } catch (Exception e) {
             
             System.err.println(" Error en apertura de cuenta: " + e.getMessage());
+
             return crearRespuestaError(e.getMessage());
         }
     }
@@ -227,7 +228,7 @@ public class AperturaCuentaService {
 
         if(request == null) throw new IllegalArgumentException("La solicitud no puede ser nula");
 
-        if(request.getClienteId() == null) throw new IllegalArgumentException("Se necesita id del cliente");
+        if(request.getClienteId() == null || request.getClienteId().isEmpty()) throw new IllegalArgumentException("Se necesita id del cliente");
 
         if(request.getMoneda() == null) throw new IllegalArgumentException("Se requiere moneda");
 
@@ -308,7 +309,7 @@ public class AperturaCuentaService {
         
         String mensaje = String.format(
             "Cuenta %s creada exitosamente para %s. %s",
-            cuenta.getCuentaId(),
+            cuenta.getCuentaId().getValor(),
             cliente.getNombre(),
             request.getSaldoInicial() != null && 
             request.getSaldoInicial().compareTo(BigDecimal.ZERO) > 0 ?
@@ -336,6 +337,6 @@ public class AperturaCuentaService {
             LocalDateTime.now(),
             "Error en apertura de cuenta: " + mensajeError
         );
-    }
+        }
     
 }

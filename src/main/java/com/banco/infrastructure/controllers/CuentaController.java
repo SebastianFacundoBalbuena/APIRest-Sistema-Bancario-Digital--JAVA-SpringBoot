@@ -51,14 +51,7 @@ public class CuentaController {
 
         return ResponseEntity
         .status(HttpStatus.OK)
-        .body(new AperturaCuentaResponse(
-            response.getCuentaId(), 
-            response.getClienteId(), 
-            response.getTipoCuenta(), 
-            response.getMoneda(), 
-            response.getSaldoInicial(), 
-            response.getFechaApertura(), 
-            "Cuenta creada exitosamente"));
+        .body(response);
     }
 
     @GetMapping()
@@ -74,30 +67,19 @@ public class CuentaController {
     @DeleteMapping("/{cuentaStringId}")
     public ResponseEntity<?> cerrarCuentas(@PathVariable String cuentaStringId){
 
-        try {
 
             aperturaCuentaService.cerrarCuenta(cuentaStringId);
 
             return ResponseEntity.ok().build();
-
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Hubo un error al intentar cerrar la cuenta: " + e.getMessage());
-        }
     }
 
     @PostMapping("/{cuentaStringId}")
     public ResponseEntity<Void> abrirCuenta(@PathVariable String cuentaStringId){
-
-        try {
             
             aperturaCuentaService.abrirCuenta(cuentaStringId);
 
             return ResponseEntity.ok().build();
 
-        } catch (Exception e) {
-
-            throw new IllegalArgumentException("Hubo un error: " + e.getMessage());
-        }
     }
     
     
