@@ -2,6 +2,8 @@ package com.banco.infrastructure.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -242,6 +244,204 @@ class ClienteControllerTest {
             verify(gestionClienteService, never()).actualizarCliente(any(), any());
         }
     }
+
+
+
+    @Nested
+    @DisplayName("DELETE /api/clientes/{id} - Desactivar cliente")
+    class DesactivarClienteTest {
+
+        @Test
+        @DisplayName("Debería desactivar cliente y retornar 204 NO CONTENT")
+        void desactivarCliente_ClienteExistente_Retorna204() throws Exception {
+            
+
+            
+            mockMvc.perform(delete("/api/clientes/CLI-12345678"))
+                .andExpect(status().isNoContent());
+
+            verify(gestionClienteService, times(1)).descativarCliente("CLI-12345678");
+        }
+
+        @Test
+        @DisplayName("Debería retornar 400 si hay error al desactivar")
+        void desactivarCliente_ClienteConCuentas_Retorna400() throws Exception {
+            
+            //doThrow = igual que thenThrow, solo que para metodo que son void
+            doThrow(new IllegalArgumentException("No se puede desactivar cliente con cuentas"))
+                .when(gestionClienteService).descativarCliente("CLI-12345678");
+
+            
+            mockMvc.perform(delete("/api/clientes/CLI-12345678"))
+                .andExpect(status().isBadRequest());
+        }
+    }
+
+
+
+
+    @Nested
+    @DisplayName("POST /api/clientes/{id} - Activar cliente")
+    class ActivarClienteTest {
+
+        @Test
+        @DisplayName("Debería activar cliente y retornar 204 NO CONTENT")
+        void activarCliente_ClienteExistente_Retorna204() throws Exception {
+            
+            // doNothing - le decimos al servicio que no ejecute su logica
+            doNothing().when(gestionClienteService).activarCliente("CLI-12345678");
+
+           
+            mockMvc.perform(post("/api/clientes/CLI-12345678"))
+                .andExpect(status().isNoContent());
+
+            verify(gestionClienteService, times(1)).activarCliente("CLI-12345678");
+        }
+
+        @Test
+        @DisplayName("Debería retornar 400 si hay error al activar")
+        void activarCliente_ClienteNoExiste_Retorna400() throws Exception {
+            
+            doThrow(new IllegalArgumentException("Cliente no encontrado"))
+                .when(gestionClienteService).activarCliente("CLI-99999999");
+
+            
+            mockMvc.perform(post("/api/clientes/CLI-99999999"))
+                .andExpect(status().isNotFound());
+        }
+    }
+
+
+
+
+    @Nested
+    @DisplayName("POST /api/clientes/{clienteId}/cuenta/{cuentaId} - Agregar cuenta")
+    class AgregarCuentaTest {
+
+        @Test
+        @DisplayName("Debería agregar cuenta y retornar 204 NO CONTENT")
+        void agregarCuenta_DatosValidos_Retorna204() throws Exception {
+            
+            // doNothing - le decimos al servicio que no ejecute la logica real
+            doNothing().when(gestionClienteService)
+            .agregarCuentaAcliente("CLI-12345678", "ARG0170001000000012345000");
+
+            
+            mockMvc.perform(post("/api/clientes/CLI-12345678/cuenta/ARG0170001000000012345000"))
+                .andExpect(status().isNoContent());
+
+            verify(gestionClienteService, times(1))
+                .agregarCuentaAcliente("CLI-12345678", "ARG0170001000000012345000");
+        }
+
+        @Test
+        @DisplayName("Debería retornar 400 si ya tiene 5 cuentas")
+        void agregarCuenta_LimiteExcedido_Retorna400() throws Exception {
+            
+            doThrow(new IllegalArgumentException("Límite de cuentas alcanzado"))
+                .when(gestionClienteService)
+                .agregarCuentaAcliente("CLI-12345678", "ARG0170001000000012345000");
+
+            
+            mockMvc.perform(post("/api/clientes/CLI-12345678/cuenta/ARG0170001000000012345000"))
+            .andExpect(status().isBadRequest());
+        }
+    }
+
+
+    @Nested
+    @DisplayName("DELETE /api/clientes/{clienteId}/cuenta/{cuentaId} - Eliminar cuenta")
+    class EliminarCuentaTest {
+
+        @Test
+        @DisplayName("Debería eliminar cuenta y retornar 204 NO CONTENT")
+        void eliminarCuenta_CuentaExistente_Retorna204() throws Exception {
+           
+            doNothing().when(gestionClienteService)
+                .removerCuentaAcliente("CLI-12345678", "ARG0170001000000012345000");
+
+            
+            mockMvc.perform(delete("/api/clientes/CLI-12345678/cuenta/ARG0170001000000012345000"))
+                .andExpect(status().isNoContent());
+
+            verify(gestionClienteService, times(1))
+                .removerCuentaAcliente("CLI-12345678", "ARG0170001000000012345000");
+        }
+
+        @Test
+        @DisplayName("Debería retornar 400 si la cuenta no pertenece al cliente")
+        void eliminarCuenta_CuentaNoPertenece_Retorna400() throws Exception {
+          
+            doThrow(new IllegalArgumentException("La cuenta no pertenece al cliente"))
+                .when(gestionClienteService)
+                .removerCuentaAcliente("CLI-12345678", "ARG0170001000000012345000");
+
+            
+            mockMvc.perform(delete("/api/clientes/CLI-12345678/cuenta/ARG0170001000000012345000"))
+                .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName(" GET /api/clientes/{id}/cuenta - Obtener cuentas del cliente")
+    class ObtenerCuentasTest {
+
+        @Test
+        @DisplayName("Debería retornar lista de cuentas del cliente")
+        void obtenerCuentas_ClienteExistente_Retorna200() throws Exception {
+            
+            when(gestionClienteService.buscarClientePorId("CLI-12345678"))
+                .thenReturn(clienteResponse);
+
+            
+            mockMvc.perform(get("/api/clientes/CLI-12345678/cuenta"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0]").value("ARG0170001000000012345000"))
+                .andExpect(jsonPath("$[1]").value("ARG0170001000000012345010"));
+
+            verify(gestionClienteService, times(1)).buscarClientePorId("CLI-12345678");
+        }
+
+        @Test
+        @DisplayName("Debería retornar lista vacía si cliente no tiene cuentas")
+        void obtenerCuentas_ClienteSinCuentas_RetornaListaVacia() throws Exception {
+           
+            ClienteResponse clienteSinCuentas = new ClienteResponse(
+                "CLI-12345678",
+                "Juan Pérez",
+                "juan@email.com",
+                true,
+                0,
+                5,
+                Arrays.asList(),
+                LocalDateTime.now(),
+                LocalDateTime.now()
+            );
+
+            when(gestionClienteService.buscarClientePorId("CLI-12345678"))
+                .thenReturn(clienteSinCuentas);
+
+            
+            mockMvc.perform(get("/api/clientes/CLI-12345678/cuenta"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$").isEmpty());
+        }
+
+        @Test
+        @DisplayName("Debería retornar 400 si cliente no existe")
+        void obtenerCuentas_ClienteNoExiste_Retorna400() throws Exception {
+            
+            when(gestionClienteService.buscarClientePorId("CLI-99999999"))
+                .thenThrow(new IllegalArgumentException("Cliente no encontrado"));
+
+            
+            mockMvc.perform(get("/api/clientes/CLI-99999999/cuenta"))
+                .andExpect(status().isNotFound());
+        }
+    }
+
+
 
 
     
