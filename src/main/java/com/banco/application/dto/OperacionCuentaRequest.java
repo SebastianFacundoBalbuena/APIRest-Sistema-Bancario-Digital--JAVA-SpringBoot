@@ -27,10 +27,11 @@ public class OperacionCuentaRequest {
 
     private String referencia;
 
-    public OperacionCuentaRequest( String cuentaId, BigDecimal monto,
+    public OperacionCuentaRequest( String cuentaId, BigDecimal monto, String moneda,
             String descripcion, String referencia) {
         this.cuentaId = cuentaId;
         this.monto = monto;
+        this.moneda = moneda;
         this.descripcion = descripcion;
         this.referencia = referencia;
     }

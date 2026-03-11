@@ -29,6 +29,8 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import com.banco.application.dto.MovimientoDTO;
+import com.banco.application.dto.OperacionCuentaRequest;
+import com.banco.application.dto.OperacionCuentaResponse;
 import com.banco.application.dto.TransferenciaRequest;
 import com.banco.application.dto.TransferenciaResponse;
 import com.banco.application.port.out.CuentaRepository;
@@ -346,17 +348,18 @@ class TransaccionServiceTest {
         @DisplayName("Debería depositar exitosamente en cuenta válida")
         void depositar_CuentaValidaMontoPositivo_DepositoExitoso() {
             
+            OperacionCuentaRequest request = new OperacionCuentaRequest(
+                cuentaOrigenId.getValor(), 
+                new BigDecimal("500.00"), 
+                "ARG",
+                "Depósito test", 
+                null);
             
-            
-            Transaccion transaccion = transaccionService.depositar(
-            cuentaOrigenId.getValor(),
-            new BigDecimal("500.00"),
-            "ARG",
-            "Depósito test");
+            OperacionCuentaResponse transaccion = transaccionService.depositar(request);
             
             
             assertNotNull(transaccion);
-            assertThat(transaccion.getTipo()).isEqualTo(TipoTransaccion.DEPOSITO);
+            assertThat(transaccion.getTipoDeOperacion()).isEqualTo("DEPOSITO");
             
             verify(cuentaRepository, times(1)).buscarPorId(cuentaOrigenId);
             verify(cuentaRepository, times(1)).actualizar(cuentaOrigen);
@@ -367,15 +370,20 @@ class TransaccionServiceTest {
         @DisplayName("Debería fallar al depositar en cuenta inexistente")
         void depositar_CuentaNoExiste_LanzaExcepcion() {
             
+
+            OperacionCuentaRequest request = new OperacionCuentaRequest(
+                cuentaOrigenId.getValor(), 
+                new BigDecimal("500.00"), 
+                "ARG",
+                "Depósito test", 
+                null);
+
+
             when(cuentaRepository.buscarPorId(cuentaOrigenId))
                 .thenReturn(Optional.empty());
             
             
-            assertThatThrownBy(()-> transaccionService.depositar(
-            cuentaOrigenId.getValor(),
-            new BigDecimal("500.00"),
-            "ARG",
-            "Depósito test")).isInstanceOf(IllegalArgumentException.class)
+            assertThatThrownBy(()-> transaccionService.depositar(request)).isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("Error de deposito: Cuenta no encontrada");
 
 
@@ -385,11 +393,15 @@ class TransaccionServiceTest {
         @DisplayName("Debería fallar al depositar monto negativo")
         void depositar_MontoNegativo_LanzaExcepcion() {
 
-            assertThatThrownBy(()-> transaccionService.depositar(
-            cuentaOrigenId.getValor(),
-            new BigDecimal("-500.00"),
-            "ARG",
-            "Depósito test")).isInstanceOf(IllegalArgumentException.class)
+
+            OperacionCuentaRequest request = new OperacionCuentaRequest(
+                cuentaOrigenId.getValor(), 
+                new BigDecimal("-500.00"), 
+                "ARG",
+                "Depósito test", 
+                null);
+
+            assertThatThrownBy(()-> transaccionService.depositar(request)).isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("Error de deposito: El monto no puede ser negativo");
 
         }

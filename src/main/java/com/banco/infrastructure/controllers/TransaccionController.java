@@ -41,42 +41,20 @@ public class TransaccionController {
     
     @PostMapping("/transferir")
     public ResponseEntity<TransferenciaResponse> transferir(@Valid @RequestBody TransferenciaRequest request){
+  
+        TransferenciaResponse response = transaccionService.ejecutarTransferencia(request);
 
-        try {
-            
-            return ResponseEntity.ok().body(transaccionService.ejecutarTransferencia(request));
-
-        } catch (Exception e) {
-
-            throw new IllegalArgumentException("Hubo un error al intentar transferir: " + e.getMessage());
-        }
+        return ResponseEntity.ok().body(response);
     }
 
     @PostMapping("/deposito")
     public ResponseEntity<OperacionCuentaResponse> depositar(@Valid @RequestBody OperacionCuentaRequest request){
-
-        try {
-            
-            Transaccion transaccion = transaccionService.depositar(
-                request.getCuentaId(), 
-                request.getMonto(), 
-                request.getMoneda(), 
-                request.getDescripcion());
+   
+            OperacionCuentaResponse response = transaccionService.depositar(request);
 
             
-            return ResponseEntity.ok().body(new OperacionCuentaResponse(
-                transaccion.getId().getValor(), 
-                transaccion.getEstado().name(), 
-                transaccion.getMonto().getMonto(),
-                transaccion.getMonto().getMoneda().getNombre(), 
-                transaccion.getFechaCreacion(), 
-                transaccion.getCuentaOrigen() != null ? transaccion.getCuentaOrigen().getValor() : null, 
-                transaccion.getTipo().name(), "Deposito exitoso"));
+            return ResponseEntity.ok().body(response);
 
-        } catch (Exception e) {
-
-            throw new IllegalArgumentException("Hubo un error al intentar depositar: " + e.getMessage());
-        }
     }
 
     @PostMapping("/retiro")

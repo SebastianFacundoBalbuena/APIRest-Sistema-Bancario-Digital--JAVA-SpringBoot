@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import com.banco.application.dto.MovimientoDTO;
+import com.banco.application.dto.OperacionCuentaRequest;
+import com.banco.application.dto.OperacionCuentaResponse;
 import com.banco.application.dto.TransferenciaRequest;
 import com.banco.application.dto.TransferenciaResponse;
 import com.banco.application.port.out.CuentaRepository;
@@ -62,14 +64,21 @@ public class TransaccionService {
 
         } catch (Exception e) {
 
-            throw new IllegalArgumentException("Hubo un error: " + e.getMessage());
+            return respuestaErronea(e.getMessage());
         }
     }
 
 
-    public Transaccion depositar(String cuentaId, BigDecimal monto, String moneda, String descripcion){
+    public OperacionCuentaResponse depositar(OperacionCuentaRequest request){
 
         try {
+
+            String cuentaId = request.getCuentaId();
+            BigDecimal monto = request.getMonto();
+            String moneda = request.getMoneda();
+            String descripcion = request.getDescripcion();
+
+
             // convertir a objetos del dominio
             CuentaId id = CuentaId.newCuentaId(cuentaId);
             Dinero dinero = Dinero.nuevo(monto, Moneda.valueOf(moneda.toUpperCase()));
@@ -94,8 +103,16 @@ public class TransaccionService {
             cuentaRepository.actualizar(cuenta);
             transaccionRepository.guardar(transaccion);
 
-            System.out.println("✅ Depósito completado: " + transaccion.getId());
-            return transaccion;
+            System.out.println("Depósito completado: " + transaccion.getId());
+
+            return new OperacionCuentaResponse(
+                transaccion.getId().getValor(), 
+                transaccion.getEstado().name(), 
+                transaccion.getMonto().getMonto(), 
+                transaccion.getMonto().getMoneda().getNombre(), 
+                transaccion.getFechaCreacion(), 
+                transaccion.getCuentaOrigen() != null ? transaccion.getCuentaOrigen().getValor() : null, 
+                transaccion.getTipo().name(), "Deposito exitoso");
 
 
         } catch (Exception e) {
@@ -323,10 +340,10 @@ public class TransaccionService {
     private TransferenciaResponse respuestaExitosa(Transaccion transaccion){
 
         return new TransferenciaResponse(
-            transaccion.getId().toString(),
+            transaccion.getId().getValor(),
              "COMPLETADA",
               transaccion.getMonto().getMonto().setScale(2), 
-              transaccion.getMonto().getMoneda().toString(), 
+              transaccion.getMonto().getMoneda().getNombre(), 
             transaccion.getFechaCreacion(), 
             transaccion.getCuentaOrigen().getValor(), 
             transaccion.getCuentaDestino().getValor(),
@@ -355,7 +372,10 @@ public class TransaccionService {
 
         if(request == null) throw new IllegalArgumentException("La solicitud no puede ser nula");
 
-        if(request.getMonto() == null && request.getMonto().compareTo(BigDecimal.ZERO) <= 0) throw new IllegalArgumentException(
+        if(request.getMonto() == null  ) throw new IllegalArgumentException(
+            "El monto no puede ser nulo");
+
+        if(request.getMonto().compareTo(BigDecimal.ZERO) <= 0) throw new IllegalArgumentException(
             "El monto debe ser positivo");
         
         if(request.getCuentaOrigen() == null || request.getCuentaDestino() == null) throw new IllegalArgumentException(
