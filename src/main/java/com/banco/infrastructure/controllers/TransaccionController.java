@@ -60,64 +60,29 @@ public class TransaccionController {
     @PostMapping("/retiro")
     public ResponseEntity<OperacionCuentaResponse> retiro(@Valid @RequestBody OperacionCuentaRequest request){
 
-        try {
             
-            Transaccion transaccion = transaccionService.retirar(
-                request.getCuentaId(), 
-                request.getMonto(), 
-                request.getMoneda(), request.getDescripcion());
+            OperacionCuentaResponse response = transaccionService.retirar(request);
 
-            return ResponseEntity.ok().body(new OperacionCuentaResponse(
-                transaccion.getId().getValor(), 
-                transaccion.getEstado().name(), 
-                transaccion.getMonto().getMonto(), 
-                transaccion.getMonto().getMoneda().getNombre(), 
-                transaccion.getFechaCreacion(), 
-                transaccion.getCuentaOrigen() != null ? transaccion.getCuentaOrigen().getValor(): null, 
-                transaccion.getTipo().name(), "Retiro exitoso de: " + "$" + transaccion.getMonto().getMonto().setScale(2)));
-
-        } catch (Exception e) {
-
-            throw new IllegalArgumentException("Hubo un error al intentar retirar: " + e.getMessage());
-        }
+            return ResponseEntity.ok().body(response);
     }
 
     @PostMapping("/{transaccionId}/revertir")
     public ResponseEntity<OperacionCuentaResponse> revertir(@PathVariable String transaccionId){
 
-        try {
             
-            Transaccion transaccion = transaccionService.revertir(transaccionId);
+            OperacionCuentaResponse response = transaccionService.revertir(transaccionId);
 
-            return ResponseEntity.ok().body(new OperacionCuentaResponse(
-                transaccionId, 
-                transaccion.getEstado().name(), 
-                transaccion.getMonto().getMonto(), 
-                transaccion.getMonto().getMoneda().name(), 
-                transaccion.getFechaCreacion(), 
-                transaccion.getCuentaOrigen().getValor(), 
-                transaccion.getTipo().name(), "Reverso exitoso"));
-
-        } catch (Exception e) {
-
-            throw new IllegalArgumentException("Hubo un problema al intentar revertir: " +e.getMessage());
-        }
+            return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/{cuentaStringId}/movimientos")
     public ResponseEntity<?> obtenerMovimientos(@PathVariable String cuentaStringId){
 
-        try {
 
             List<MovimientoDTO> movimiento = transaccionService.consultarMovimiento(cuentaStringId);
 
             return ResponseEntity.ok().body(movimiento);
             
-
-        } catch (Exception e) {
-
-            throw new IllegalArgumentException("Error al querer obtener movimientos: " + e.getMessage());
-        }
     }
     
     

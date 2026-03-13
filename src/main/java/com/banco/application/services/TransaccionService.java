@@ -121,9 +121,15 @@ public class TransaccionService {
     }
 
 
-        public Transaccion retirar(String cuentaId, BigDecimal monto, String moneda, String descripcion){
+        public OperacionCuentaResponse retirar(OperacionCuentaRequest request){
 
         try {
+
+            String cuentaId = request.getCuentaId();
+            BigDecimal monto = request.getMonto();
+            String moneda = request.getMoneda();
+            String descripcion = request.getDescripcion();
+
             // convertir a objetos del dominio
             CuentaId id = CuentaId.newCuentaId(cuentaId);
             Dinero dinero = Dinero.nuevo(monto, Moneda.valueOf(moneda.toUpperCase()));
@@ -148,8 +154,17 @@ public class TransaccionService {
             cuentaRepository.actualizar(cuenta);
             transaccionRepository.guardar(transaccion);
 
-            System.out.println("✅ Retiro completado: " + transaccion.getId());
-            return transaccion;
+            System.out.println("Retiro completado: " + transaccion.getId());
+
+            return new OperacionCuentaResponse(
+                transaccion.getId().getValor(), 
+                transaccion.getEstado().name(), 
+                monto, 
+                moneda, 
+                transaccion.getFechaCreacion(), 
+                cuentaId, 
+                transaccion.getTipo().name(), 
+                transaccion.getDescripcion());
 
 
         } catch (Exception e) {
@@ -158,11 +173,11 @@ public class TransaccionService {
     }
 
 
-    public Transaccion revertir(String transaccionId){
+    public OperacionCuentaResponse revertir(String transaccionId){
 
         try {
             
-                    // buscar transaccion original
+        // buscar transaccion original
         TransaccionId id = new TransaccionId(transaccionId);
         Transaccion original = transaccionRepository.buscarPorId(id).orElseThrow(()-> new IllegalArgumentException(
             "Transaccion no encontrada"));
@@ -214,8 +229,17 @@ public class TransaccionService {
             transaccionRepository.guardar(original);
             transaccionRepository.guardar(transaccion);
 
-            System.out.println("✅ Transacción revertida: " + original.getId());
-            return transaccion;
+            System.out.println("Transacción revertida: " + original.getId());
+
+            return new OperacionCuentaResponse(
+                transaccionId, 
+                transaccion.getEstado().name(),
+                transaccion.getMonto().getMonto(), 
+                transaccion.getMonto().getMoneda().getNombre(), 
+                transaccion.getFechaCreacion(), 
+                transaccion.getCuentaOrigen().getValor(), 
+                transaccion.getTipo().name(), 
+                transaccion.getDescripcion());
 
         } catch (Exception e) {
             throw new IllegalArgumentException("Error al revertir: " + e.getMessage());

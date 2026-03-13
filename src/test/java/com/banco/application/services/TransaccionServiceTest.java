@@ -421,22 +421,24 @@ class TransaccionServiceTest {
         @DisplayName("Retirar de cuenta con fondos - deberia funcionar")
         void retiroCuentaConFondos_debeFuncionar(){
 
-
-            Transaccion transaccion= transaccionService.retirar(
+            OperacionCuentaRequest request = new OperacionCuentaRequest(
                 cuentaOrigenId.getValor(), 
                 new BigDecimal("500.00"), 
                 "ARG", 
-                "retiro test");
+                "retiro test", 
+                null);
+
+            OperacionCuentaResponse transaccion= transaccionService.retirar(request);
 
 
             assertNotNull(transaccion);
-            assertThat(transaccion.getTipo()).isEqualTo(TipoTransaccion.RETIRO);
-            assertThat(transaccion.getDescripcion()).contains("retiro test");
+            assertThat(transaccion.getTipoDeOperacion()).isEqualTo("RETIRO");
+            assertThat(transaccion.getMensaje()).contains("retiro test");
             assertThat(cuentaOrigen.getSaldo().getMontoConEscalaMoneda()).isEqualTo("500.00");
 
             verify(cuentaRepository, times(1)).buscarPorId(cuentaOrigenId);
             verify(cuentaRepository,times(1)).actualizar(cuentaOrigen);
-            verify(transaccionRepository, times(1)).guardar(transaccion);
+            verify(transaccionRepository, times(1)).guardar(any());
 
 
         }
@@ -448,11 +450,15 @@ class TransaccionServiceTest {
         void retiroCuentaSinFondos_debeFallar(){
 
 
-            assertThatThrownBy(()-> transaccionService.retirar(
+                OperacionCuentaRequest request = new OperacionCuentaRequest(
                 cuentaOrigenId.getValor(), 
                 new BigDecimal("1500.00"), 
                 "ARG", 
-                "retiro fallido"))
+                "retiro fallido", 
+                null);
+
+
+            assertThatThrownBy(()-> transaccionService.retirar(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Saldo insuficiente"); 
 
@@ -472,13 +478,16 @@ class TransaccionServiceTest {
 
             Cuenta cuentaInactiva = new Cuenta(cuentaOrigenId, clienteId, Moneda.ARG, dinero, false);
 
-            when(cuentaRepository.buscarPorId(cuentaOrigenId)).thenReturn(Optional.of(cuentaInactiva));
-
-            assertThatThrownBy(()-> transaccionService.retirar(
-                cuentaOrigenId.getValor(), 
+                OperacionCuentaRequest request = new OperacionCuentaRequest(
+                cuentaInactiva.getCuentaId().getValor(), 
                 new BigDecimal("500.00"), 
                 "ARG", 
-                "retiro fallido"))
+                "retiro fallido", 
+                null);
+
+            when(cuentaRepository.buscarPorId(cuentaOrigenId)).thenReturn(Optional.of(cuentaInactiva));
+
+            assertThatThrownBy(()-> transaccionService.retirar(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("inactiva"); 
 
@@ -521,12 +530,12 @@ class TransaccionServiceTest {
 
                 when(transaccionRepository.buscarPorId(any(TransaccionId.class))).thenReturn(Optional.of(transaccionOriginal));
 
-                Transaccion response = transaccionService.revertir(transaccionId.getValor());
+                OperacionCuentaResponse response = transaccionService.revertir(transaccionId.getValor());
 
 
                 assertNotNull(response);
-                assertThat(response.getEstado()).isEqualTo(EstadoTransaccion.COMPLETADA);
-                assertThat(response.getTipo()).isEqualTo(TipoTransaccion.REVERSO);
+                assertThat(response.getEstado()).isEqualTo("COMPLETADA");
+                assertThat(response.getTipoDeOperacion()).isEqualTo("REVERSO");
 
 
                 verify(transaccionRepository, times(1)).buscarPorId(any(TransaccionId.class));
