@@ -9,7 +9,7 @@ import com.banco.application.dto.OperacionCuentaResponse;
 import com.banco.application.dto.TransferenciaRequest;
 import com.banco.application.dto.TransferenciaResponse;
 import com.banco.application.services.TransaccionService;
-import com.banco.domain.model.entities.Transaccion;
+
 
 import jakarta.validation.Valid;
 

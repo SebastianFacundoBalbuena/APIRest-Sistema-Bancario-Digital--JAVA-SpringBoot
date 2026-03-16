@@ -21,6 +21,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EntityScan(
     basePackages = "com.banco.infrastructure.persistence.entities" )
 
-    // @EnableTransactionManagement: Habilita transacciones automáticas
+// @EnableTransactionManagement: Habilita transacciones automáticas
 @EnableTransactionManagement
 public class PersistenceConfig{}
