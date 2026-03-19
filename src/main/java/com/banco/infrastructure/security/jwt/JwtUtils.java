@@ -4,7 +4,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +30,7 @@ public class JwtUtils {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    //Es el plazo de validez del token (en milisegundos).
+    //Es el plazo de validez del token 24hs(en milisegundos).
     @Value("${jwt.expiration}")
     private int jwtExpiration;
 
@@ -48,7 +48,7 @@ public class JwtUtils {
      public String generarToken(UserDetails userDetails){
 
         // Agregar información extra al token
-        // Nota = Siempre y cuando cumpla con clave, valor Map<String, Object>
+        // Nota = Siempre y cuando cumpla con clave, valor = Map<String, Object>
         Map<String, Object> claims = new HashMap<>();
         claims.put("rol", userDetails.getAuthorities());
 
