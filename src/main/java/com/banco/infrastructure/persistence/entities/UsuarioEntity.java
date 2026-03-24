@@ -53,8 +53,7 @@ public class UsuarioEntity implements UserDetails {
 
 
 
-    public UsuarioEntity(UUID id, String username, String password, String email, String rol, String clienteId) {
-        this.id = id;
+    public UsuarioEntity(String username, String password, String email, String rol, String clienteId) {
         this.username = username;
         this.password = password;
         this.email = email;
