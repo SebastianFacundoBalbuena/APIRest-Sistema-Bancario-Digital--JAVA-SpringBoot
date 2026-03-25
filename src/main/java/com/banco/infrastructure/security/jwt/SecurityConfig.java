@@ -2,6 +2,7 @@ package com.banco.infrastructure.security.jwt;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,6 +17,7 @@ import com.banco.application.services.UsersDetailsService;
 
 @Configuration  // Spring usara nuestra configuracion
 @EnableWebSecurity  // Activa la seguridad web
+@Profile("!test") //no carga cuando el perfil es tets
 public class SecurityConfig {
     
 

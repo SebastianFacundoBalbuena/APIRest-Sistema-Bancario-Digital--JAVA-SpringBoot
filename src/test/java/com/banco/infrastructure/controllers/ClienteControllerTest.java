@@ -18,7 +18,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+
+import org.springframework.boot.test.context.SpringBootTest;
+
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -30,6 +35,8 @@ import com.banco.application.dto.ActualizarClienteRequest;
 import com.banco.application.dto.ClienteRequest;
 import com.banco.application.dto.ClienteResponse;
 import com.banco.application.services.GestionClienteService;
+import com.banco.infrastructure.config.TestSecurityConfig;
+import com.banco.infrastructure.security.jwt.SecurityConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -38,7 +45,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 
-@WebMvcTest(ClienteController.class)
+@SpringBootTest  //carga todo el contexto como si fuera real (utilizando configuracion real, no mocks)
+@AutoConfigureMockMvc // Te inyecta un MockMvc listo para usar y con @SpringBootTest, MockMvc usa los controladores reales
+@ActiveProfiles("test")
+@Import(TestSecurityConfig.class) 
 class ClienteControllerTest {
 
 
@@ -47,6 +57,9 @@ class ClienteControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;  // ObjectMapper es un traductor entre Java y JSON.
+
+    @MockitoBean
+    private SecurityConfig securityConfig;  // ← Esto evita que se cargue la seguridad real
 
 
     @MockitoBean
@@ -102,6 +115,7 @@ class ClienteControllerTest {
             .thenReturn(clienteResponse);
 
             mockMvc.perform(post("/api/clientes")  // Simulanos una petición POST a la URL /api/clientes
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M=")
             .contentType(MediaType.APPLICATION_JSON) // Lo que envío va en formato JSON
             .content(objectMapper.writeValueAsString(actualizarRequest))) // El contenido del POST es este objeto convertido a JSON
             .andExpect(status().isCreated())
@@ -125,6 +139,7 @@ class ClienteControllerTest {
             ClienteRequest requestInvalido = new ClienteRequest("", "email-invalido");
 
             mockMvc.perform(post("/api/clientes")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M=")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(requestInvalido)))
             .andExpect(status().isBadRequest());
@@ -151,6 +166,7 @@ class ClienteControllerTest {
             .thenReturn(clienteResponse);
 
             mockMvc.perform(get("/api/clientes/CLI-12345678") // simula peticion get  en url
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M=")
             .contentType(MediaType.APPLICATION_JSON) // lo que envio va en formato json
             .content(objectMapper.writeValueAsString(actualizarRequest))) // el contenido debe ser este objeto en json
             .andExpect(status().isOk())
@@ -173,8 +189,11 @@ class ClienteControllerTest {
             when(gestionClienteService.buscarClientePorId("CLI-99999999"))
                 .thenThrow(new IllegalArgumentException("Cliente no encontrado"));
 
-            mockMvc.perform(get("/api/clientes/CLI-99999999"))
+
+            mockMvc.perform(get("/api/clientes/CLI-99999999")
+                .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isNotFound());
+
 
 
         }
@@ -215,6 +234,7 @@ class ClienteControllerTest {
 
 
             mockMvc.perform(put("/api/clientes/CLI-12345678") // EJECUTAMOS la petición y reviamos valores
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M=")
             .contentType(MediaType.APPLICATION_JSON)  // Lo que te mando es JSON
             .content(objectMapper.writeValueAsString(actualizarRequest))) // Este es el JSON convertido
             .andExpect(status().isCreated())
@@ -237,6 +257,7 @@ class ClienteControllerTest {
 
            
             mockMvc.perform(put("/api/clientes/CLI-12345678")
+                    .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M=")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(requestInvalido)))
                 .andExpect(status().isBadRequest());
@@ -257,7 +278,8 @@ class ClienteControllerTest {
             
 
             
-            mockMvc.perform(delete("/api/clientes/CLI-12345678"))
+            mockMvc.perform(delete("/api/clientes/CLI-12345678")
+                .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isNoContent());
 
             verify(gestionClienteService, times(1)).descativarCliente("CLI-12345678");
@@ -272,7 +294,8 @@ class ClienteControllerTest {
                 .when(gestionClienteService).descativarCliente("CLI-12345678");
 
             
-            mockMvc.perform(delete("/api/clientes/CLI-12345678"))
+            mockMvc.perform(delete("/api/clientes/CLI-12345678")
+                .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isBadRequest());
         }
     }
@@ -292,7 +315,8 @@ class ClienteControllerTest {
             doNothing().when(gestionClienteService).activarCliente("CLI-12345678");
 
            
-            mockMvc.perform(post("/api/clientes/CLI-12345678"))
+            mockMvc.perform(post("/api/clientes/CLI-12345678")
+                .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isNoContent());
 
             verify(gestionClienteService, times(1)).activarCliente("CLI-12345678");
@@ -306,7 +330,8 @@ class ClienteControllerTest {
                 .when(gestionClienteService).activarCliente("CLI-99999999");
 
             
-            mockMvc.perform(post("/api/clientes/CLI-99999999"))
+            mockMvc.perform(post("/api/clientes/CLI-99999999")
+                .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isNotFound());
         }
     }
@@ -327,7 +352,8 @@ class ClienteControllerTest {
             .agregarCuentaAcliente("CLI-12345678", "ARG0170001000000012345000");
 
             
-            mockMvc.perform(post("/api/clientes/CLI-12345678/cuenta/ARG0170001000000012345000"))
+            mockMvc.perform(post("/api/clientes/CLI-12345678/cuenta/ARG0170001000000012345000")
+                .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isNoContent());
 
             verify(gestionClienteService, times(1))
@@ -343,7 +369,8 @@ class ClienteControllerTest {
                 .agregarCuentaAcliente("CLI-12345678", "ARG0170001000000012345000");
 
             
-            mockMvc.perform(post("/api/clientes/CLI-12345678/cuenta/ARG0170001000000012345000"))
+            mockMvc.perform(post("/api/clientes/CLI-12345678/cuenta/ARG0170001000000012345000")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
             .andExpect(status().isBadRequest());
         }
     }
@@ -361,7 +388,8 @@ class ClienteControllerTest {
                 .removerCuentaAcliente("CLI-12345678", "ARG0170001000000012345000");
 
             
-            mockMvc.perform(delete("/api/clientes/CLI-12345678/cuenta/ARG0170001000000012345000"))
+            mockMvc.perform(delete("/api/clientes/CLI-12345678/cuenta/ARG0170001000000012345000")
+                .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isNoContent());
 
             verify(gestionClienteService, times(1))
@@ -377,7 +405,8 @@ class ClienteControllerTest {
                 .removerCuentaAcliente("CLI-12345678", "ARG0170001000000012345000");
 
             
-            mockMvc.perform(delete("/api/clientes/CLI-12345678/cuenta/ARG0170001000000012345000"))
+            mockMvc.perform(delete("/api/clientes/CLI-12345678/cuenta/ARG0170001000000012345000")
+                .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isBadRequest());
         }
     }
@@ -394,7 +423,8 @@ class ClienteControllerTest {
                 .thenReturn(clienteResponse);
 
             
-            mockMvc.perform(get("/api/clientes/CLI-12345678/cuenta"))
+            mockMvc.perform(get("/api/clientes/CLI-12345678/cuenta")
+                .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0]").value("ARG0170001000000012345000"))
                 .andExpect(jsonPath("$[1]").value("ARG0170001000000012345010"));
@@ -422,7 +452,8 @@ class ClienteControllerTest {
                 .thenReturn(clienteSinCuentas);
 
             
-            mockMvc.perform(get("/api/clientes/CLI-12345678/cuenta"))
+            mockMvc.perform(get("/api/clientes/CLI-12345678/cuenta")
+                .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$").isEmpty());
@@ -436,7 +467,8 @@ class ClienteControllerTest {
                 .thenThrow(new IllegalArgumentException("Cliente no encontrado"));
 
             
-            mockMvc.perform(get("/api/clientes/CLI-99999999/cuenta"))
+            mockMvc.perform(get("/api/clientes/CLI-99999999/cuenta")
+                .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isNotFound());
         }
     }
