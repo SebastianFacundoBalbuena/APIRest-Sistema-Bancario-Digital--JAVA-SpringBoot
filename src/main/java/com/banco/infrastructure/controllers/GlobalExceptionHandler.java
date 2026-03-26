@@ -14,7 +14,7 @@ import com.banco.application.dto.ErrorResponseDTO;
 
 
 
-
+@SuppressWarnings("all") // elimina los warings 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     

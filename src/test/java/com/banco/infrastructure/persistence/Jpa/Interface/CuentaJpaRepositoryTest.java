@@ -23,7 +23,7 @@ import com.banco.infrastructure.persistence.jpa.Interface.CuentaJpaRepository;
 
 
 
-
+@SuppressWarnings("all") // elimina los warings 
 @DataJpaTest  // crea una copia de la DATA BASE EN MEMORIA H2 para simular  la rela
 public class CuentaJpaRepositoryTest {
     

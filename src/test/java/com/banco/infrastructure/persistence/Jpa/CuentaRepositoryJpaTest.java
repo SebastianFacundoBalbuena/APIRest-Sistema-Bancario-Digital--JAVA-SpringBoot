@@ -37,7 +37,7 @@ import com.banco.infrastructure.persistence.mappers.CuentaMapper;
 
 
 
-
+@SuppressWarnings("all") // elimina los warings 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT) // permite mocks pre config sin uso
 class CuentaRepositoryJpaTest {

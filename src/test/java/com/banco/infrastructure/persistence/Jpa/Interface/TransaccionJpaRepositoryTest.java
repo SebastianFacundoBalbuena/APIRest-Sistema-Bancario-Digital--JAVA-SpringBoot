@@ -25,7 +25,7 @@ import com.banco.infrastructure.persistence.jpa.Interface.TransaccionJpaReposito
 
 
 
-
+@SuppressWarnings("all") // elimina los warings 
 @DataJpaTest // crea una copia de la BD real en MEMORIA
 public class TransaccionJpaRepositoryTest {
     

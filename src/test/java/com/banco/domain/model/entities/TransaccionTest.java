@@ -18,6 +18,9 @@ import com.banco.domain.model.valueobjects.TransaccionId;
 import com.banco.domain.model.valueobjects.TransaccionId.EstadoTransaccion;
 import com.banco.domain.model.valueobjects.TransaccionId.TipoTransaccion;
 
+
+
+@SuppressWarnings("all") // elimina los warings 
 class TransaccionTest {
 
 

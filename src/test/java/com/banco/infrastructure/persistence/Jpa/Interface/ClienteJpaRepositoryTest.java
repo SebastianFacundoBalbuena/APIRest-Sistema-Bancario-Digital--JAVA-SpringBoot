@@ -21,7 +21,7 @@ import com.banco.infrastructure.persistence.jpa.Interface.ClienteJpaRepository;
 
 
 
-
+@SuppressWarnings("all") // elimina los warings 
 @DataJpaTest // anotacion que activa H2 = (BASE DE DATOS EN MEMORIA) realiza copia del repositorio, config(properties) y tablas
 public class ClienteJpaRepositoryTest {
     

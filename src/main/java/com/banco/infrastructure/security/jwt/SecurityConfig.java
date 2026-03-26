@@ -15,6 +15,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.banco.application.services.UsersDetailsService;
 
+
+@SuppressWarnings("all") // elimina los warings 
 @Configuration  // Spring usara nuestra configuracion
 @EnableWebSecurity  // Activa la seguridad web
 @Profile("!test") //no carga cuando el perfil es tets

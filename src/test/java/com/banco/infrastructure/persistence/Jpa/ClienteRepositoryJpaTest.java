@@ -29,6 +29,9 @@ import com.banco.infrastructure.persistence.jpa.ClienteRepositoryJpa;
 import com.banco.infrastructure.persistence.jpa.Interface.ClienteJpaRepository;
 import com.banco.infrastructure.persistence.mappers.ClienteMapper;
 
+
+
+@SuppressWarnings("all") // elimina los warings 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT) // permite mocks pre config sin uso
 class ClienteRepositoryJpaTest {

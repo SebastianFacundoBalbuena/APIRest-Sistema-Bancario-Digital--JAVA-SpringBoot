@@ -42,7 +42,7 @@ import com.banco.domain.model.valueobjects.CuentaId;
 import com.banco.domain.model.valueobjects.Dinero;
 import com.banco.domain.model.valueobjects.Moneda;
 import com.banco.domain.model.valueobjects.TransaccionId;
-import com.banco.domain.model.valueobjects.TransaccionId.EstadoTransaccion;
+
 import com.banco.domain.model.valueobjects.TransaccionId.TipoTransaccion;
 
 

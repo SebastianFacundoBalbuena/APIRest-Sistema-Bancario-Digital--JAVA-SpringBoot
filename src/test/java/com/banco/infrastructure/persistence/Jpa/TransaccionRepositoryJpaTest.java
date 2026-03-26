@@ -43,7 +43,7 @@ import com.banco.infrastructure.persistence.mappers.TransaccionMapper;
 
 
 
-
+@SuppressWarnings("all") // elimina los warings 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT) // permite mocks pre confg sin uso
 class TransaccionRepositoryJpaTest {

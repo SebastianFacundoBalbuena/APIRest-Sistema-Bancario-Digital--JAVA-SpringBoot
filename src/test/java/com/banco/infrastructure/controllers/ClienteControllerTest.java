@@ -44,7 +44,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 
-
+@SuppressWarnings("all") // elimina los warings 
 @SpringBootTest  //carga todo el contexto como si fuera real (utilizando configuracion real, no mocks)
 @AutoConfigureMockMvc // Te inyecta un MockMvc listo para usar y con @SpringBootTest, MockMvc usa los controladores reales
 @ActiveProfiles("test") //que use el perfil "test" de TestSecurity
@@ -58,7 +58,6 @@ class ClienteControllerTest {
     @Autowired
     private ObjectMapper objectMapper;  // ObjectMapper es un traductor entre Java y JSON.
 
-    
 
     @MockitoBean
     private GestionClienteService gestionClienteService;

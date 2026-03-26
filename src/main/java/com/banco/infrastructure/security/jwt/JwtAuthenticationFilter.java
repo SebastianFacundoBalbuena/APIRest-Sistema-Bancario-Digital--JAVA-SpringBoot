@@ -23,6 +23,9 @@ import jakarta.servlet.http.HttpServletResponse;
 // toda la informacion del request = Lo que hace (validar token, extraer usuario, etc.)
 // Decidir si la petición sigue al controlador o se corta (chain)
 
+
+
+@SuppressWarnings("all") // elimina los warings 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     
