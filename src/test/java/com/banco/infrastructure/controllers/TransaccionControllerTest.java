@@ -1,7 +1,7 @@
 package com.banco.infrastructure.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,8 +20,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -37,14 +40,17 @@ import com.banco.domain.model.valueobjects.Dinero;
 import com.banco.domain.model.valueobjects.Moneda;
 import com.banco.domain.model.valueobjects.TransaccionId;
 import com.banco.domain.model.valueobjects.TransaccionId.TipoTransaccion;
+import com.banco.infrastructure.config.TestSecurityConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 
 
 
-
-@WebMvcTest(TransaccionController.class)
+@SpringBootTest  //carga todo el contexto como si fuera real (utilizando configuracion real, no mocks)
+@AutoConfigureMockMvc  // Te inyecta un MockMvc listo para usar y con @SpringBootTest, MockMvc usa los controladores reales
+@ActiveProfiles("test") //que use el perfil "test" de TestSecurity
+@Import(TestSecurityConfig.class)
 public class TransaccionControllerTest {
     
 
@@ -54,6 +60,8 @@ public class TransaccionControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+
 
     @MockitoBean
     private TransaccionService transaccionService;
@@ -181,6 +189,7 @@ public class TransaccionControllerTest {
 
             
             mockMvc.perform(post("/api/transacciones/transferir")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M=")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(transferenciaRequest)))
                 .andExpect(status().isOk())
@@ -210,6 +219,7 @@ public class TransaccionControllerTest {
 
           
             mockMvc.perform(post("/api/transacciones/transferir")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M=")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestInvalido)))
                 .andExpect(status().isBadRequest());
@@ -224,6 +234,7 @@ public class TransaccionControllerTest {
 
             
             mockMvc.perform(post("/api/transacciones/transferir")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M=")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(transferenciaRequest)))
                 .andExpect(status().isBadRequest());
@@ -248,6 +259,7 @@ public class TransaccionControllerTest {
 
           
             mockMvc.perform(post("/api/transacciones/deposito")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M=")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(operacionRequest)))
                 .andExpect(status().isOk())
@@ -270,6 +282,7 @@ public class TransaccionControllerTest {
 
             
             mockMvc.perform(post("/api/transacciones/deposito")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M=")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(operacionRequest)))
                 .andExpect(status().isBadRequest());
@@ -291,6 +304,7 @@ public class TransaccionControllerTest {
 
             
             mockMvc.perform(post("/api/transacciones/retiro")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M=")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(operacionRequest)))
                 .andExpect(status().isOk())
@@ -313,6 +327,7 @@ public class TransaccionControllerTest {
 
             
             mockMvc.perform(post("/api/transacciones/retiro")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M=")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(operacionRequest)))
                 .andExpect(status().isBadRequest());
@@ -355,7 +370,8 @@ public class TransaccionControllerTest {
                 .thenReturn(responseRevertida);
 
             
-            mockMvc.perform(post("/api/transacciones/TXN-2024-0000001/revertir"))
+            mockMvc.perform(post("/api/transacciones/TXN-2024-0000001/revertir")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.transaccionId").value("TXN-2024-0000003"))
                 .andExpect(jsonPath("$.estado").value("COMPLETADA"))
@@ -374,7 +390,8 @@ public class TransaccionControllerTest {
                 .thenThrow(new IllegalArgumentException("Transacción no reversible"));
 
             
-            mockMvc.perform(post("/api/transacciones/TXN-2024-0000001/revertir"))
+            mockMvc.perform(post("/api/transacciones/TXN-2024-0000001/revertir")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
             .andExpect(status().isBadRequest());
         }
     }
@@ -394,7 +411,8 @@ public class TransaccionControllerTest {
                 .thenReturn(movimientos);
 
             
-            mockMvc.perform(get("/api/transacciones/ARG0170001000000012345000/movimientos"))
+            mockMvc.perform(get("/api/transacciones/ARG0170001000000012345000/movimientos")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value("TXN-2024-0000001"))
                 .andExpect(jsonPath("$[0].tipo").value("TRANSFERENCIA"))
@@ -415,7 +433,8 @@ public class TransaccionControllerTest {
                 .thenThrow(new IllegalArgumentException("Formato de cuenta inválido"));
 
             
-            mockMvc.perform(get("/api/transacciones/ID-INVALIDO/movimientos"))
+            mockMvc.perform(get("/api/transacciones/ID-INVALIDO/movimientos")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isBadRequest());
         }
 
@@ -427,7 +446,8 @@ public class TransaccionControllerTest {
                 .thenReturn(Arrays.asList());
 
             
-            mockMvc.perform(get("/api/transacciones/ARG0170001000000012345000/movimientos"))
+            mockMvc.perform(get("/api/transacciones/ARG0170001000000012345000/movimientos")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$").isEmpty());
@@ -451,6 +471,7 @@ public class TransaccionControllerTest {
 
             
             mockMvc.perform(post("/api/transacciones/transferir")
+                .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M=")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(transferenciaRequest)))
                 .andExpect(status().isBadRequest());
@@ -473,6 +494,7 @@ public class TransaccionControllerTest {
 
             
             mockMvc.perform(post("/api/transacciones/deposito")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M=")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestMontoCero)))
                 .andExpect(status().isBadRequest());
@@ -495,6 +517,7 @@ public class TransaccionControllerTest {
 
             
             mockMvc.perform(post("/api/transacciones/retiro")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M=")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestMonedaInvalida)))
                 .andExpect(status().isBadRequest());

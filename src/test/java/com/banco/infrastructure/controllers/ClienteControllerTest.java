@@ -36,7 +36,7 @@ import com.banco.application.dto.ClienteRequest;
 import com.banco.application.dto.ClienteResponse;
 import com.banco.application.services.GestionClienteService;
 import com.banco.infrastructure.config.TestSecurityConfig;
-import com.banco.infrastructure.security.jwt.SecurityConfig;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -47,7 +47,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest  //carga todo el contexto como si fuera real (utilizando configuracion real, no mocks)
 @AutoConfigureMockMvc // Te inyecta un MockMvc listo para usar y con @SpringBootTest, MockMvc usa los controladores reales
-@ActiveProfiles("test")
+@ActiveProfiles("test") //que use el perfil "test" de TestSecurity
 @Import(TestSecurityConfig.class) 
 class ClienteControllerTest {
 
@@ -58,9 +58,7 @@ class ClienteControllerTest {
     @Autowired
     private ObjectMapper objectMapper;  // ObjectMapper es un traductor entre Java y JSON.
 
-    @MockitoBean
-    private SecurityConfig securityConfig;  // ← Esto evita que se cargue la seguridad real
-
+    
 
     @MockitoBean
     private GestionClienteService gestionClienteService;

@@ -1,7 +1,7 @@
 package com.banco.infrastructure.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.contains;
+
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -21,9 +21,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -33,6 +35,7 @@ import com.banco.application.dto.ConsultaSaldoRequest;
 import com.banco.application.dto.ConsultaSaldoResponse;
 import com.banco.application.services.AperturaCuentaService;
 import com.banco.application.services.ConsultaSaldoService;
+import com.banco.infrastructure.config.TestSecurityConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -40,7 +43,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 
-@WebMvcTest(CuentaController.class)
+@SpringBootTest  //carga todo el contexto como si fuera real (utilizando configuracion real, no mocks)
+@AutoConfigureMockMvc // Te inyecta un MockMvc listo para usar y con @SpringBootTest, MockMvc usa los controladores reales
+@ActiveProfiles("test")  //que use el perfil "test" de TestSecurity
+@Import(TestSecurityConfig.class)
 public class CuentaControllerTest {
     
 
@@ -49,6 +55,7 @@ public class CuentaControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;  // ObjectMapper es un traductor entre Java y JSON.
+
 
     @MockitoBean
     private AperturaCuentaService aperturaCuentaService;
@@ -116,6 +123,7 @@ public class CuentaControllerTest {
 
             
             mockMvc.perform(post("/api/cuentas")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M=")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(aperturaRequest)))
                 .andExpect(status().isOk())
@@ -151,6 +159,7 @@ public class CuentaControllerTest {
             .thenReturn(respuestaError);
             
             mockMvc.perform(post("/api/cuentas")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M=")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestInvalido)))
                 .andExpect(status().isOk())
@@ -166,6 +175,7 @@ public class CuentaControllerTest {
 
            
             mockMvc.perform(post("/api/cuentas")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M=")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(aperturaRequest)))
                 .andExpect(status().isBadRequest());
@@ -185,6 +195,7 @@ public class CuentaControllerTest {
 
           
             mockMvc.perform(get("/api/cuentas")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M=")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(consultaRequest)))
                 .andExpect(status().isOk())
@@ -215,6 +226,7 @@ public class CuentaControllerTest {
             .thenReturn(respuestaError);
            
             mockMvc.perform(get("/api/cuentas")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M=")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestInvalido)))
                 .andExpect(status().isOk())
@@ -233,7 +245,8 @@ public class CuentaControllerTest {
             doNothing().when(aperturaCuentaService).cerrarCuenta("ARG0170001000000012345000");
 
             
-            mockMvc.perform(delete("/api/cuentas/ARG0170001000000012345000"))
+            mockMvc.perform(delete("/api/cuentas/ARG0170001000000012345000")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isOk());
 
             verify(aperturaCuentaService, times(1))
@@ -248,7 +261,8 @@ public class CuentaControllerTest {
                 .when(aperturaCuentaService).cerrarCuenta("ARG0170001000000012345000");
 
             
-            mockMvc.perform(delete("/api/cuentas/ARG0170001000000012345000"))
+            mockMvc.perform(delete("/api/cuentas/ARG0170001000000012345000")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isBadRequest());
         }
     }
@@ -267,7 +281,8 @@ public class CuentaControllerTest {
             doNothing().when(aperturaCuentaService).abrirCuenta("ARG0170001000000012345000");
 
           
-            mockMvc.perform(post("/api/cuentas/ARG0170001000000012345000"))
+            mockMvc.perform(post("/api/cuentas/ARG0170001000000012345000")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isOk());
 
             verify(aperturaCuentaService, times(1))
@@ -282,7 +297,8 @@ public class CuentaControllerTest {
                 .when(aperturaCuentaService).abrirCuenta("ARG0170001000000012345000");
 
            
-            mockMvc.perform(post("/api/cuentas/ARG0170001000000012345000"))
+            mockMvc.perform(post("/api/cuentas/ARG0170001000000012345000")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isBadRequest());
         }
     }
@@ -299,7 +315,8 @@ public class CuentaControllerTest {
                 .when(aperturaCuentaService).cerrarCuenta("ID-INVALIDO");
 
            
-            mockMvc.perform(delete("/api/cuentas/ID-INVALIDO"))
+            mockMvc.perform(delete("/api/cuentas/ID-INVALIDO")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isBadRequest());
         }
 
@@ -311,7 +328,8 @@ public class CuentaControllerTest {
                 .when(aperturaCuentaService).abrirCuenta("NO-EXISTE");
 
            
-            mockMvc.perform(post("/api/cuentas/NO-EXISTE"))
+            mockMvc.perform(post("/api/cuentas/NO-EXISTE")
+            .header("Authorization", "Basic dGVzdHVzZXI6dGVzdHBhc3M="))
                 .andExpect(status().isBadRequest());
         }
     }

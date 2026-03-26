@@ -25,7 +25,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @SuppressWarnings("deprecation")  // elimina msj de advertencia 
 @TestConfiguration
-@Profile("test")
+@Profile("test") // perfil "test"
 public class TestSecurityConfig {
 
 
