@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  # =============================================
+  # APLICACIÓN SPRING BOOT
+  # =============================================
+  app:
+    build: ./Proyecto-Sistema-de-banco-digital
+    container_name: banco_app # colocamos un nombre al contenedor de la app
+    mem_limit: 512m  #Limita la memoria. evita que la app se coma toda la memoria
+    ports:
+      - "8080:8080"
+    environment:  # variables de entorno. Spring Boot sobreescribe las de application.properties
+      #  Conexión a BD 
+      DB_URL: jdbc:postgresql://postgres:5432/banco_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: balbuena022000
+      
+      # Configuración JWT
+      JWT_SECRET: 586E3272357538782F413F4428472B4B6250655368566B597033733676397924
+      JWT_EXPIRATION: "86400000"
+    restart: always #  Si el contenedor se cae por algún error, Docker lo reinicia automáticamente.
+    depends_on:  #No arranques la app hasta que PostgreSQL esté LISTO (saludable). evita errores
+      postgres:
+        condition: service_healthy
+
+  # =============================================
+  # BASE DE DATOS POSTGRESQL
+  # =============================================
+  postgres:
+    image: postgres:17-alpine
+    container_name: banco_postgres #nombre del contenedor de BD
+    ports:
+      - "5433:5432"
+    environment:  #  Estas variables son requeridas por PostgreSQL para crear la base de datos al arrancar.
+      #Variables de PostgreSQL 
+      POSTGRES_DB: banco_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: balbuena022000   
+    volumes: #Guarda los datos de PostgreSQL en un "volumen" de Docker. Sino los datos se pierden(transacciones, cuentas,etc)
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    # Healthcheck DENTRO del servicio postgres
+    healthcheck: #verificar si PostgreSQL está realmente listo para recibir conexiones.
+      test: ["CMD-SHELL", "pg_isready -U postgres"] # 'test' Comando a ejecutar para verificar salud/'pg_isready -U postgres' devuelve ok si esta todo listo
+      interval: 10s #Verificar cada 10 segundos
+      timeout: 5s #Si el comando tarda más de 5 segundos, falla
+      retries: 5 #Si falla 5 veces seguidas, marca el contenedor como "no saludable"
+
+# =============================================
+# VOLUMEN
+# =============================================
+volumes: #Declara el volumen que usamos en PostgreSQL. Docker crea una carpeta especial en tu disco donde guarda los datos.
+  postgres_data:
