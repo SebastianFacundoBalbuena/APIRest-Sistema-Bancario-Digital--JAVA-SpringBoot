@@ -21,7 +21,7 @@ spring.datasource.url=${DB_URL:jdbc:postgresql://localhost:8181/banco_db}
 # Usuario de la base de datos
 spring.datasource.username=${DB_USERNAME:postgres}
 # Contraseña 
-spring.datasource.password=${DB_PASSWORD: "Colocar_tu_contraseña"}
+spring.datasource.password=${DB_PASSWORD:CAMBIAR_POR_TU_CONTRASEÑA}
 # Driver de PostgreSQL
 spring.datasource.driver-class-name=org.postgresql.Driver
 
