@@ -1,17 +1,27 @@
 spring.application.name=banco
 
 
+
+# =============================================
+# CONFIGURACIÓN JWT (usando variables de entorno)
+# =============================================
 # Configuracion JWT (KEY Y EXPIRACION 24hs)
-jwt.secret=586E3272357538782F413F4428472B4B6250655368566B597033733676397924
-jwt.expiration=86400000 
+# ${JWT_SECRET:valor_default} = si existe variable JWT_SECRET, la usa; si no, usa valor_default
+jwt.secret=${JWT_SECRET:586E3272357538782F413F4428472B4B6250655368566B597033733676397924}
+jwt.expiration=${JWT_EXPIRATION:86400000} 
 
 
+
+
+# =============================================
+# CONEXIÓNES JPA + POSTGRESQL (usando variables de entorno)
+# =============================================
 # URL de conexión a PostgreSQL
-spring.datasource.url=jdbc:postgresql://localhost:8181/banco_db
+spring.datasource.url=${DB_URL:jdbc:postgresql://localhost:8181/banco_db}
 # Usuario de la base de datos
-spring.datasource.username=postgres
+spring.datasource.username=${DB_USERNAME:postgres}
 # Contraseña 
-spring.datasource.password=balbuena022000
+spring.datasource.password=${DB_PASSWORD: "Colocar_tu_contraseña"}
 # Driver de PostgreSQL
 spring.datasource.driver-class-name=org.postgresql.Driver
 

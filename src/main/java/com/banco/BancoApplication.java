@@ -13,7 +13,7 @@ public class BancoApplication {
 		SpringApplication.run(BancoApplication.class, args);
         System.out.println("✅ Aplicación bancaria iniciada correctamente");
 		System.out.print("✅ LOCALHOST:  http://localhost:8080\n"); //n = para salto de linea
-		System.out.println("✅ Documentacion implementada en Swagger: http://localhost:8080/swagger-ui.html");
+		System.out.println("✅ Documentacion implementada en Swagger: http://localhost:8080/swagger-ui/index.html");
 	}
 
 
