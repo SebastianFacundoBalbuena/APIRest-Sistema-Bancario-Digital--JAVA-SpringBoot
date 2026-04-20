@@ -59,11 +59,21 @@ public class GestionClienteService {
 
 
     public ClienteResponse buscarClientePorEmail(String email) {
-    validarEmail(email); 
     
-    Cliente cliente = clienteRepository.buscarPorEmail(email);
-    if (cliente == null) {
-        throw new IllegalArgumentException("Cliente no encontrado con email: " + email);
+        if (email == null) {
+        throw new IllegalArgumentException("El email no puede ser nulo");
+        }
+
+        if (!email.contains("@") || 
+        !email.contains(".") || 
+        email.indexOf("@") > email.lastIndexOf(".")) {  
+        
+        throw new IllegalArgumentException("Formato de email inválido: " + email);
+        }
+    
+        Cliente cliente = clienteRepository.buscarPorEmail(email);
+        if (cliente == null) {
+          throw new IllegalArgumentException("Cliente no encontrado con email: " + email);
     }
     
     return convertirResponse(cliente);
