@@ -1,6 +1,7 @@
 package com.banco.infrastructure.controllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import com.banco.application.dto.ActualizarClienteRequest;
@@ -65,7 +66,7 @@ public class ClienteController {
 
 
     @GetMapping("/buscar-por-email")
-    public ResponseEntity<ClienteResponse> buscarClientePorEmail(@PathVariable String email) {
+    public ResponseEntity<ClienteResponse> buscarClientePorEmail(@RequestParam String email) {
     ClienteResponse cliente = gestionClienteService.buscarClientePorEmail(email);
     return ResponseEntity.ok(cliente);
     }
