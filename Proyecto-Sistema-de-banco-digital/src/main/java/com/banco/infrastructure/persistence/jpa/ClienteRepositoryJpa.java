@@ -53,6 +53,18 @@ public class ClienteRepositoryJpa implements ClienteRepository {
 
     }
 
+
+    @Override
+    public Cliente buscarPorEmail(String email) {
+    Optional<ClienteEntity> entityOpt = clienteJpaRepository.findByEmail(email);
+    
+    if (entityOpt.isPresent()) {
+        return clienteMapper.aDominio(entityOpt.get());
+    }
+    return null;
+    }
+
+
     @Override
     public void guardar(Cliente cliente){
 

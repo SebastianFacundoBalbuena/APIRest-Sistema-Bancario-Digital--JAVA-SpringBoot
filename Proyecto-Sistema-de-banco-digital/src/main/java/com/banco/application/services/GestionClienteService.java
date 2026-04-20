@@ -57,6 +57,18 @@ public class GestionClienteService {
 
     }
 
+
+    public ClienteResponse buscarClientePorEmail(String email) {
+    validarEmail(email); 
+    
+    Cliente cliente = clienteRepository.buscarPorEmail(email);
+    if (cliente == null) {
+        throw new IllegalArgumentException("Cliente no encontrado con email: " + email);
+    }
+    
+    return convertirResponse(cliente);
+    }
+
     public ClienteResponse actualizarCliente(String clienteId, ActualizarClienteRequest request){
 
 

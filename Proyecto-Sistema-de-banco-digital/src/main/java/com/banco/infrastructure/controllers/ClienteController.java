@@ -63,6 +63,13 @@ public class ClienteController {
         .body(cliente);
     }
 
+
+    @GetMapping("/buscar-por-email")
+    public ResponseEntity<ClienteResponse> buscarClientePorEmail(@PathVariable String email) {
+    ClienteResponse cliente = gestionClienteService.buscarClientePorEmail(email);
+    return ResponseEntity.ok(cliente);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<ClienteResponse> actualizarCliente(@PathVariable String id, 
        @Valid @RequestBody ActualizarClienteRequest request){

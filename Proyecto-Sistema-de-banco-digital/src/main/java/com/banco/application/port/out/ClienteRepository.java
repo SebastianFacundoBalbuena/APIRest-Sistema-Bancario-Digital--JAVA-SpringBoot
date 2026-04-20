@@ -13,6 +13,9 @@ public interface ClienteRepository {
     // BUSCAR POR ID
     Cliente buscarPorId(String clienteId);
 
+    // BUSCAR POR EMAIL
+    Cliente buscarPorEmail(String email);   
+
     // VALIDAR EXISTENCIA POR EMAIL
     boolean existePorEmail(String email);
 
