@@ -55,7 +55,7 @@ public class ClienteController {
     }
 
 
-    @GetMapping("/buscar-por-email")
+    @GetMapping("/email")
     public ResponseEntity<ClienteResponse> buscarClientePorEmail(@RequestParam String email) {
     ClienteResponse cliente = gestionClienteService.buscarClientePorEmail(email);
     return ResponseEntity.ok(cliente);
