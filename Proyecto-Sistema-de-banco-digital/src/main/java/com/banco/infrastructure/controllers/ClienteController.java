@@ -54,6 +54,14 @@ public class ClienteController {
        .body(cliente);
     }
 
+
+    @GetMapping("/buscar-por-email")
+    public ResponseEntity<ClienteResponse> buscarClientePorEmail(@RequestParam String email) {
+    ClienteResponse cliente = gestionClienteService.buscarClientePorEmail(email);
+    return ResponseEntity.ok(cliente);
+    }
+
+    
     @GetMapping("/{id}")
     public ResponseEntity<ClienteResponse> obtenerCliente(@PathVariable String id) {
         
@@ -64,12 +72,8 @@ public class ClienteController {
         .body(cliente);
     }
 
+    
 
-    @GetMapping("/buscar-por-email")
-    public ResponseEntity<ClienteResponse> buscarClientePorEmail(@RequestParam String email) {
-    ClienteResponse cliente = gestionClienteService.buscarClientePorEmail(email);
-    return ResponseEntity.ok(cliente);
-    }
 
     @PutMapping("/{id}")
     public ResponseEntity<ClienteResponse> actualizarCliente(@PathVariable String id, 
