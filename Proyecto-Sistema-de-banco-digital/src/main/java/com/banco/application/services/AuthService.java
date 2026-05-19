@@ -70,7 +70,8 @@ public class AuthService {
             token, 
             usuarioEntity.getUsername(), 
             usuarioEntity.getEmail(), 
-            usuarioEntity.getRol());
+            usuarioEntity.getRol(),
+            usuarioEntity.getClienteId());
 
     }
 

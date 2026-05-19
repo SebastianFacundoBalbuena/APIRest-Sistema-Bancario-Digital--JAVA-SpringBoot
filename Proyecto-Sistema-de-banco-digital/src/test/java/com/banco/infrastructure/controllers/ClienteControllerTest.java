@@ -1,6 +1,7 @@
 package com.banco.infrastructure.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -108,7 +109,7 @@ class ClienteControllerTest {
         @DisplayName("deberia crear cliente y retornar 201")
         void crearClienteCorrectamente_deberiaRetornar201() throws Exception{
 
-            when(gestionClienteService.crearCliente(any(ClienteRequest.class)))
+            when(gestionClienteService.crearCliente(any(ClienteRequest.class), anyString()))
             .thenReturn(clienteResponse);
 
             mockMvc.perform(post("/api/clientes")  // Simulanos una petición POST a la URL /api/clientes
@@ -124,7 +125,7 @@ class ClienteControllerTest {
             .andExpect(jsonPath("$.activo").value("true"))
             .andExpect(jsonPath("$.cantidadCuentas").value("2"));
 
-            verify(gestionClienteService, times(1)).crearCliente(any(ClienteRequest.class));
+            verify(gestionClienteService, times(1)).crearCliente(any(ClienteRequest.class), anyString());
 
         }
 
@@ -141,7 +142,7 @@ class ClienteControllerTest {
             .content(objectMapper.writeValueAsString(requestInvalido)))
             .andExpect(status().isBadRequest());
 
-            verify(gestionClienteService, never()).crearCliente(any());
+            verify(gestionClienteService, never()).crearCliente(any(), any());
 
 
         }

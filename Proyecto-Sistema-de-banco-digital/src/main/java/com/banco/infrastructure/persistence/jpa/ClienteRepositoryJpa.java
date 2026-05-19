@@ -1,6 +1,9 @@
 package com.banco.infrastructure.persistence.jpa;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Repository;
 import com.banco.application.port.out.ClienteRepository;
 import com.banco.domain.model.entities.Cliente;
@@ -51,6 +54,15 @@ public class ClienteRepositoryJpa implements ClienteRepository {
             return null;
         }
 
+    }
+
+
+    @Override
+    public List<Cliente> listarTodos() {
+    List<ClienteEntity> entities = clienteJpaRepository.findAll();
+    return entities.stream()
+        .map(clienteMapper::aDominio)
+        .collect(Collectors.toList());
     }
 
 

@@ -64,6 +64,20 @@ public class CuentaController {
         .ok(response);
     }
 
+
+    @GetMapping("/{cuentaId}")
+    public ResponseEntity<ConsultaSaldoResponse> consultarSaldo(@PathVariable String cuentaId) {
+        ConsultaSaldoRequest request = new ConsultaSaldoRequest();
+        request.setCuentaId(cuentaId);
+        request.setIncluirMovimientos(false);  // Para solo el saldo
+        request.setLimiteMovimientos(10);
+        
+        ConsultaSaldoResponse response = consultaSaldoService.consultarSaldo(request);
+        return ResponseEntity.ok(response);
+    }
+    
+
+
     @DeleteMapping("/{cuentaStringId}")
     public ResponseEntity<?> cerrarCuentas(@PathVariable String cuentaStringId){
 

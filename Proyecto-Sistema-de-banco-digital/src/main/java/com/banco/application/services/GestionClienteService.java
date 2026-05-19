@@ -13,6 +13,9 @@ import com.banco.application.port.out.ClienteRepository;
 import com.banco.domain.model.entities.Cliente;
 import com.banco.domain.model.valueobjects.ClienteId;
 import com.banco.domain.model.valueobjects.CuentaId;
+import com.banco.infrastructure.persistence.entities.UsuarioEntity;
+import com.banco.infrastructure.persistence.jpa.Interface.UsuarioJpaRepository;
+
 import jakarta.transaction.Transactional;
 
 
@@ -21,28 +24,34 @@ import jakarta.transaction.Transactional;
 public class GestionClienteService {
 
     private final ClienteRepository clienteRepository;
+    private final UsuarioJpaRepository usuarioJpaRepository;
 
     private static final int MAX_CUENTAS_PERMITIDAS = 5; // Debería venir del dominio
 
     // CONSTRUCTOR
-    public GestionClienteService(ClienteRepository clienteRepository) {
+    public GestionClienteService(ClienteRepository clienteRepository, UsuarioJpaRepository usuarioJpaRepository) {
         this.clienteRepository = clienteRepository;
+        this.usuarioJpaRepository = usuarioJpaRepository;
 
     }
 
     
     // METODOS BASICOS
 
-    public ClienteResponse crearCliente(ClienteRequest request){
+    public ClienteResponse crearCliente(ClienteRequest request, String username){
 
         validarEmail(request.getEmail());
 
+        UsuarioEntity usuario = usuarioJpaRepository.findByUsername(username)
+        .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
         ClienteId clienteId = ClienteId.generarNuevoId();
-
         Cliente cliente = new Cliente(clienteId, request.getNombre(), request.getEmail());
-
-        
         clienteRepository.guardar(cliente);
+
+        //vincular usuario con cliente
+        usuario.setClienteId(clienteId.getValor());
+        usuarioJpaRepository.save(usuario);
 
         return convertirResponse(cliente);
 
@@ -55,6 +64,14 @@ public class GestionClienteService {
 
         return convertirResponse(cliente);
 
+    }
+
+
+    public List<ClienteResponse> listarTodos() {
+    List<Cliente> clientes = clienteRepository.listarTodos();
+    return clientes.stream()
+        .map(this::convertirResponse)
+        .collect(Collectors.toList());
     }
 
 

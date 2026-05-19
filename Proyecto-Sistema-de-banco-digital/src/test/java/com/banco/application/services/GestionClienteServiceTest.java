@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,6 +32,8 @@ import com.banco.application.port.out.ClienteRepository;
 import com.banco.domain.model.entities.Cliente;
 import com.banco.domain.model.valueobjects.ClienteId;
 import com.banco.domain.model.valueobjects.CuentaId;
+import com.banco.infrastructure.persistence.entities.UsuarioEntity;
+import com.banco.infrastructure.persistence.jpa.Interface.UsuarioJpaRepository;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT) // permite mocks sin uso
@@ -40,6 +43,9 @@ public class GestionClienteServiceTest {
 
     @Mock
     private ClienteRepository clienteRepository;
+
+    @Mock
+    private UsuarioJpaRepository usuarioJpaRepository;
 
     @InjectMocks
     private GestionClienteService gestionClienteService;
@@ -52,6 +58,7 @@ public class GestionClienteServiceTest {
     private CuentaId cuentaId2;
     private List<CuentaId> cuentasCliente;
     private Cliente clienteConDosCuentas;
+    private UsuarioEntity usuarioEntity;
 
 
 
@@ -70,6 +77,15 @@ public class GestionClienteServiceTest {
         clienteConDosCuentas = new Cliente(
         clienteId, "Juan Pérez", "juan@email.com", true, cuentasCliente);
 
+
+        // USUARIO DE PRUEBA
+        usuarioEntity = new UsuarioEntity();
+        usuarioEntity.setUsername("testuser");
+        usuarioEntity.setClienteId(null);
+        usuarioEntity.setEmail("juan@email.com");
+        usuarioEntity.setPassword("password");
+        usuarioEntity.setRol("USER");
+
     }
 
 
@@ -86,9 +102,10 @@ public class GestionClienteServiceTest {
         void crearCliente_DatosValidos_ClienteCreado() {
             
             when(clienteRepository.existePorEmail(clienteRequest.getEmail())).thenReturn(false);
+            when(usuarioJpaRepository.findByUsername("testuser")).thenReturn(Optional.of(usuarioEntity));
 
             
-            ClienteResponse response = gestionClienteService.crearCliente(clienteRequest);
+            ClienteResponse response = gestionClienteService.crearCliente(clienteRequest, "testuser");
 
             
             assertNotNull(response);
@@ -107,9 +124,10 @@ public class GestionClienteServiceTest {
         void crearCliente_EmailExistente_LanzaExcepcion() {
             
             when(clienteRepository.existePorEmail(clienteRequest.getEmail())).thenReturn(true);
+            when(usuarioJpaRepository.findByUsername("testuser")).thenReturn(Optional.of(usuarioEntity));
 
             
-            assertThatThrownBy(() -> gestionClienteService.crearCliente(clienteRequest))
+            assertThatThrownBy(() -> gestionClienteService.crearCliente(clienteRequest, "testuser"))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("Email")
             .hasMessageContaining("ya esta registrado");
@@ -435,11 +453,12 @@ public class GestionClienteServiceTest {
         void validarEmail_EmailValido_NoLanzaExcepcion() {
             
             when(clienteRepository.existePorEmail("nuevo@email.com")).thenReturn(false);
+            when(usuarioJpaRepository.findByUsername("testuser")).thenReturn(Optional.of(usuarioEntity));
 
             ClienteRequest request = new ClienteRequest("Test", "nuevo@email.com");
 
             
-            assertDoesNotThrow(() -> gestionClienteService.crearCliente(request));
+            assertDoesNotThrow(() -> gestionClienteService.crearCliente(request, "testuser"));
         }
 
         @Test

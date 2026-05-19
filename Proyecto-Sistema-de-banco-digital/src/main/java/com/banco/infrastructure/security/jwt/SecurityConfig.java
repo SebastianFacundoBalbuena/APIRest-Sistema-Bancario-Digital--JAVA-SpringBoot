@@ -12,7 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
+import org.springframework.http.HttpMethod;
 import com.banco.application.services.UsersDetailsService;
 
 
@@ -78,10 +78,20 @@ public class SecurityConfig {
             .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
             .requestMatchers("/api/clientes/verificar-email").permitAll()
 
-            // Rutas Protegidas
-            .requestMatchers("/api/clientes/**").authenticated()
-            .requestMatchers("/api/cuentas/**").authenticated()
-            .requestMatchers("/api/transacciones/**").authenticated()
+            // RUTAS SOLO PARA ADMIN
+            .requestMatchers(HttpMethod.GET, "/api/clientes").hasRole("ADMIN")  // Listar todos
+            .requestMatchers(HttpMethod.PUT, "/api/clientes/**").hasRole("ADMIN")  // Actualizar
+            .requestMatchers(HttpMethod.DELETE, "/api/clientes/**").hasRole("ADMIN")  // Desactivar
+            .requestMatchers(HttpMethod.POST, "/api/clientes/*/cuenta/*").hasRole("ADMIN")  // Agregar cuenta
+            .requestMatchers(HttpMethod.DELETE, "/api/clientes/*/cuenta/*").hasRole("ADMIN")  // Remover cuenta
+            .requestMatchers("/api/cuentas").hasRole("ADMIN")  // Operaciones administrativas en cuentas
+
+
+            // RUTAS PARA USUARIOS AUTENTICADOS (CLIENTES)
+            .requestMatchers(HttpMethod.GET, "/api/cuentas/{cuentaId}").authenticated() // ver saldo
+            .requestMatchers(HttpMethod.GET, "/api/clientes/{id}").authenticated()  // Ver su propio cliente
+            .requestMatchers(HttpMethod.GET, "/api/clientes/{id}/cuenta").authenticated()  // Ver sus cuentas
+            .requestMatchers("/api/transacciones/**").authenticated()  // Transferencias, movimientos
 
             // cualquier otra ruta requiere AUTENTICACION
             .anyRequest().authenticated()

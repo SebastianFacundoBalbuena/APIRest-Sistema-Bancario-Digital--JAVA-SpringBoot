@@ -11,12 +11,14 @@ public class AuthResponse {
     private String username;
     private String email;
     private String rol;
+    private String clienteId;
     
-    public AuthResponse(String token, String username, String email, String rol) {
+    public AuthResponse(String token, String username, String email, String rol, String clienteId) {
         this.token = token;
         this.username = username;
         this.email = email;
         this.rol = rol;
+        this.clienteId = clienteId;
     }
     
     // Getters y Setters
@@ -34,5 +36,8 @@ public class AuthResponse {
     
     public String getRol() { return rol; }
     public void setRol(String rol) { this.rol = rol; }
+
+    public String getClienteId() { return clienteId; }
+    public void setClienteId(String clienteId) { this.clienteId = clienteId; }
     
 }

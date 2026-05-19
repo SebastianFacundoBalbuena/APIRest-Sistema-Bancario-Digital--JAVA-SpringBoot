@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,15 +44,23 @@ public class ClienteController {
     // GESTION CLIENTE
     
     @PostMapping()
-    public ResponseEntity<ClienteResponse> crearCliente(@Valid @RequestBody ClienteRequest entity) {
-        
-       ClienteResponse cliente = gestionClienteService.crearCliente(entity);
+    public ResponseEntity<ClienteResponse> crearCliente(@Valid @RequestBody ClienteRequest entity, Authentication authentication) {
+
+       String username = authentication.getName();
+       ClienteResponse cliente = gestionClienteService.crearCliente(entity, username);
 
        // Construimos respuesta HTTP completa
        return ResponseEntity
        .status(HttpStatus.CREATED)
        .header("Location", "api/cliente " + cliente.getClienteId())
        .body(cliente);
+    }
+
+
+    @GetMapping()
+    public ResponseEntity<List<ClienteResponse>> listarClientes() {
+    List<ClienteResponse> clientes = gestionClienteService.listarTodos();
+    return ResponseEntity.ok(clientes);
     }
 
 
