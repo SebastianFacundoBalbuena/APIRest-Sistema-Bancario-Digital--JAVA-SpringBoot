@@ -79,6 +79,8 @@ public class SecurityConfig {
             .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
             .requestMatchers("/api/clientes/verificar-email").permitAll()
 
+            .requestMatchers(HttpMethod.POST, "/api/cuentas").authenticated() // crear cuenta(usuario autenticado)
+
             // RUTAS SOLO PARA ADMIN
             .requestMatchers(HttpMethod.GET, "/api/clientes").hasRole("ADMIN")  // Listar todos
             .requestMatchers(HttpMethod.PUT, "/api/clientes/**").hasRole("ADMIN")  // Actualizar
