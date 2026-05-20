@@ -72,6 +72,7 @@ public class SecurityConfig {
 
          // Configurar autorización de rutas
          .authorizeHttpRequests(auth -> auth
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             
             //Rutas PÚBLICAS
             .requestMatchers("/auth/**").permitAll()
