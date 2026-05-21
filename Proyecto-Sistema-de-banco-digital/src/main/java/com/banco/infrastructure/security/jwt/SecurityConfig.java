@@ -64,6 +64,8 @@ public class SecurityConfig {
         http
         .csrf(csrf -> csrf.disable()) 
 
+        .cors(cors -> {})  //  Spring Security usa la config que tenemos de Cors(CorsConfig)
+
         // Cada request es independiente, no guardes nada en el servidor(Cookies)
         // cada request tiene su Authorization(datos) y creara conflictos de datos almacenados anteriormente
         .sessionManagement(session -> session
