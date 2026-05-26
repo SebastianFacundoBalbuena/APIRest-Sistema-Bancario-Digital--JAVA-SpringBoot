@@ -18,7 +18,9 @@ public class CorsConfig  {
             "http://localhost:5173",
             "http://mi-banco-frontend-sebastian.s3-website-us-east-1.amazonaws.com",
             "https://d2ju01mldc72mr.cloudfront.net",
-            "https://mibancobackend.hopto.org"
+            "https://mibancobackend.hopto.org",
+            "http://localhost",
+            "http://127.0.0.1"
         ));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
