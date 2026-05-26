@@ -17,7 +17,8 @@ public class CorsConfig  {
         config.setAllowedOrigins(Arrays.asList(
             "http://localhost:5173",
             "http://mi-banco-frontend-sebastian.s3-website-us-east-1.amazonaws.com",
-            "https://d2ju01mldc72mr.cloudfront.net"
+            "https://d2ju01mldc72mr.cloudfront.net",
+            "https://mibancobackend.hopto.org"
         ));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
